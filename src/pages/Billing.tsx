@@ -1,8 +1,9 @@
-
+import { useState } from 'react';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   DollarSign, 
   TrendingUp, 
@@ -11,8 +12,16 @@ import {
   AlertTriangle,
   CheckCircle,
   Plus,
-  Download
+  Download,
+  Shield,
+  FileCheck
 } from 'lucide-react';
+
+// Import new billing components
+import { ClaimForm } from '@/components/Billing/ClaimForm';
+import { PaymentEntry } from '@/components/Billing/PaymentEntry';
+import { EligibilityVerification } from '@/components/Billing/EligibilityVerification';
+import { PriorAuthForm } from '@/components/Billing/PriorAuthForm';
 
 const billingMetrics = [
   {
@@ -94,6 +103,8 @@ const paymentMethods = [
 ];
 
 export default function Billing() {
+  const [activeTab, setActiveTab] = useState('overview');
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-800';
@@ -127,92 +138,122 @@ export default function Billing() {
             </Button>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Manual Entry
+              Quick Action
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {billingMetrics.map((metric, index) => {
-            const IconComponent = metric.icon;
-            return (
-              <Card key={index}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
-                      <p className={`text-sm ${metric.color === 'green' ? 'text-green-600' : metric.color === 'red' ? 'text-red-600' : 'text-blue-600'}`}>
-                        {metric.change} from last month
-                      </p>
-                    </div>
-                    <div className={`p-3 rounded-lg ${getMetricColor(metric.color)}`}>
-                      <IconComponent className="h-6 w-6" />
-                    </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="claims">Claims</TabsTrigger>
+            <TabsTrigger value="payments">Payments</TabsTrigger>
+            <TabsTrigger value="eligibility">Eligibility</TabsTrigger>
+            <TabsTrigger value="prior-auth">Prior Auth</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            {/* Metrics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {billingMetrics.map((metric, index) => {
+                const IconComponent = metric.icon;
+                return (
+                  <Card key={index}>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">{metric.title}</p>
+                          <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
+                          <p className={`text-sm ${metric.color === 'green' ? 'text-green-600' : metric.color === 'red' ? 'text-red-600' : 'text-blue-600'}`}>
+                            {metric.change} from last month
+                          </p>
+                        </div>
+                        <div className={`p-3 rounded-lg ${getMetricColor(metric.color)}`}>
+                          <IconComponent className="h-6 w-6" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Payment Distribution and Recent Transactions */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <CreditCard className="h-5 w-5 mr-2" />
+                    Payment Distribution
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {paymentMethods.map((method, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{method.method}</span>
+                          <span className="text-sm text-gray-600">{method.amount}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{ width: `${method.percentage}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-gray-500">{method.percentage}%</div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <CreditCard className="h-5 w-5 mr-2" />
-                Payment Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {paymentMethods.map((method, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">{method.method}</span>
-                      <span className="text-sm text-gray-600">{method.amount}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{ width: `${method.percentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="text-xs text-gray-500">{method.percentage}%</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Recent Transactions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-medium text-gray-900">{transaction.patient}</p>
-                        <span className="font-medium text-green-600">{transaction.amount}</span>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <FileText className="h-5 w-5 mr-2" />
+                    Recent Transactions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {recentTransactions.map((transaction) => (
+                      <div key={transaction.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="font-medium text-gray-900">{transaction.patient}</p>
+                            <span className="font-medium text-green-600">{transaction.amount}</span>
+                          </div>
+                          <p className="text-sm text-gray-600">{transaction.type} • {transaction.payer}</p>
+                          <p className="text-xs text-gray-500">{transaction.date}</p>
+                        </div>
+                        <Badge className={getStatusColor(transaction.status)}>
+                          {transaction.status}
+                        </Badge>
                       </div>
-                      <p className="text-sm text-gray-600">{transaction.type} • {transaction.payer}</p>
-                      <p className="text-xs text-gray-500">{transaction.date}</p>
-                    </div>
-                    <Badge className={getStatusColor(transaction.status)}>
-                      {transaction.status}
-                    </Badge>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="claims">
+            <ClaimForm />
+          </TabsContent>
+
+          <TabsContent value="payments">
+            <PaymentEntry />
+          </TabsContent>
+
+          <TabsContent value="eligibility">
+            <EligibilityVerification />
+          </TabsContent>
+
+          <TabsContent value="prior-auth">
+            <PriorAuthForm />
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );
