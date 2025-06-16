@@ -77,7 +77,7 @@ export function DenialAnalytics({ claims }: DenialAnalyticsProps) {
             <div className="text-center">
               <p className="text-sm text-gray-600">Avg Days to Appeal</p>
               <p className="text-2xl font-bold text-blue-600">8.5</p>
-              <p className="text-xs text-gray-500">Target: < 10 days</p>
+              <p className="text-xs text-gray-500">Target: &lt; 10 days</p>
             </div>
           </CardContent>
         </Card>
