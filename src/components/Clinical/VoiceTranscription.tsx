@@ -19,9 +19,10 @@ export function VoiceTranscription({ onTranscription }: VoiceTranscriptionProps)
 
   useEffect(() => {
     // Check if browser supports speech recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
+    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognitionClass) {
+      recognitionRef.current = new SpeechRecognitionClass() as SpeechRecognition;
       
       if (recognitionRef.current) {
         recognitionRef.current.continuous = true;
@@ -114,6 +115,10 @@ export function VoiceTranscription({ onTranscription }: VoiceTranscriptionProps)
     }
   };
 
+  const isSpeechRecognitionSupported = () => {
+    return ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -142,6 +147,7 @@ export function VoiceTranscription({ onTranscription }: VoiceTranscriptionProps)
             onClick={isRecording ? stopRecording : startRecording}
             variant={isRecording ? "destructive" : "default"}
             size="lg"
+            disabled={!isSpeechRecognitionSupported()}
           >
             {isRecording ? (
               <>
@@ -194,13 +200,15 @@ export function VoiceTranscription({ onTranscription }: VoiceTranscriptionProps)
               <div className="text-gray-500 italic">
                 {isRecording 
                   ? "Listening... speak now" 
-                  : "Click 'Start Recording' to begin voice transcription"}
+                  : isSpeechRecognitionSupported()
+                    ? "Click 'Start Recording' to begin voice transcription"
+                    : "Speech recognition is not supported in this browser"}
               </div>
             )}
           </div>
         </div>
 
-        {!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) && (
+        {!isSpeechRecognitionSupported() && (
           <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
             Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari for voice transcription.
           </div>
