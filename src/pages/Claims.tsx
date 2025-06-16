@@ -1,9 +1,9 @@
-
 import { useState, useMemo } from 'react';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   FileText, 
   Plus, 
@@ -11,12 +11,16 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Settings
+  Settings,
+  AlertTriangle,
+  Brain,
+  BarChart3
 } from 'lucide-react';
 import { ClaimsFilter, ClaimFilters } from '@/components/Claims/ClaimsFilter';
 import { ClaimsTable, ClaimData } from '@/components/Claims/ClaimsTable';
 import { ClaimDetailModal } from '@/components/Claims/ClaimDetailModal';
 import { ClaimForm } from '@/components/Billing/ClaimForm';
+import { DenialManagement } from '@/components/Claims/DenialManagement';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 // Enhanced mock data with more realistic claims
