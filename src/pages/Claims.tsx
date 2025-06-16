@@ -1,4 +1,5 @@
 
+import { useState, useMemo } from 'react';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,16 +7,20 @@ import { Badge } from '@/components/ui/badge';
 import { 
   FileText, 
   Plus, 
-  Search, 
-  Download, 
   RefreshCw,
-  DollarSign,
-  Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Clock,
+  Settings
 } from 'lucide-react';
+import { ClaimsFilter, ClaimFilters } from '@/components/Claims/ClaimsFilter';
+import { ClaimsTable, ClaimData } from '@/components/Claims/ClaimsTable';
+import { ClaimDetailModal } from '@/components/Claims/ClaimDetailModal';
+import { ClaimForm } from '@/components/Billing/ClaimForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-const claims = [
+// Enhanced mock data with more realistic claims
+const initialClaims: ClaimData[] = [
   {
     id: 'CLM-2024-001',
     patient: 'John Smith',
@@ -59,46 +64,118 @@ const claims = [
     status: 'processing',
     payer: 'UnitedHealth',
     cptCodes: ['99214', '96116']
-  }
-];
-
-const claimStats = [
-  {
-    title: 'Total Claims',
-    value: '234',
-    icon: FileText,
-    color: 'blue'
   },
   {
-    title: 'Approved',
-    value: '198',
-    icon: CheckCircle,
-    color: 'green'
+    id: 'CLM-2024-005',
+    patient: 'Robert Brown',
+    provider: 'Dr. Johnson',
+    dateOfService: '2024-01-15',
+    submissionDate: '2024-01-16',
+    amount: '$450.00',
+    status: 'approved',
+    payer: 'Cigna',
+    cptCodes: ['99215', '90837']
   },
   {
-    title: 'Pending',
-    value: '23',
-    icon: Clock,
-    color: 'yellow'
-  },
-  {
-    title: 'Denied',
-    value: '13',
-    icon: XCircle,
-    color: 'red'
+    id: 'CLM-2024-006',
+    patient: 'Lisa Martinez',
+    provider: 'Dr. Wilson',
+    dateOfService: '2024-01-13',
+    submissionDate: '2024-01-15',
+    amount: '$125.00',
+    status: 'resubmitted',
+    payer: 'Aetna',
+    cptCodes: ['99213']
   }
 ];
 
 export default function Claims() {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'denied': return 'bg-red-100 text-red-800';
-      case 'processing': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const [claims, setClaims] = useState<ClaimData[]>(initialClaims);
+  const [filters, setFilters] = useState<ClaimFilters>({
+    status: '',
+    payer: '',
+    provider: '',
+    patientSearch: '',
+    cptCode: '',
+    serviceStartDate: '',
+    serviceEndDate: '',
+    submissionStartDate: '',
+    submissionEndDate: '',
+    amountMin: '',
+    amountMax: ''
+  });
+  const [selectedClaims, setSelectedClaims] = useState<string[]>([]);
+  const [selectedClaim, setSelectedClaim] = useState<ClaimData | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isNewClaimModalOpen, setIsNewClaimModalOpen] = useState(false);
+
+  // Filter claims based on active filters
+  const filteredClaims = useMemo(() => {
+    return claims.filter(claim => {
+      // Status filter
+      if (filters.status && claim.status !== filters.status) return false;
+      
+      // Payer filter
+      if (filters.payer && claim.payer !== filters.payer) return false;
+      
+      // Provider filter
+      if (filters.provider && claim.provider !== filters.provider) return false;
+      
+      // Patient search
+      if (filters.patientSearch && !claim.patient.toLowerCase().includes(filters.patientSearch.toLowerCase()) && !claim.id.toLowerCase().includes(filters.patientSearch.toLowerCase())) return false;
+      
+      // CPT code filter
+      if (filters.cptCode && !claim.cptCodes.some(code => code.includes(filters.cptCode))) return false;
+      
+      // Service date range
+      if (filters.serviceStartDate && claim.dateOfService < filters.serviceStartDate) return false;
+      if (filters.serviceEndDate && claim.dateOfService > filters.serviceEndDate) return false;
+      
+      // Amount range
+      const amount = parseFloat(claim.amount.replace('$', '').replace(',', ''));
+      if (filters.amountMin && amount < parseFloat(filters.amountMin)) return false;
+      if (filters.amountMax && amount > parseFloat(filters.amountMax)) return false;
+      
+      return true;
+    });
+  }, [claims, filters]);
+
+  // Calculate statistics
+  const claimStats = useMemo(() => {
+    const total = filteredClaims.length;
+    const approved = filteredClaims.filter(c => c.status === 'approved').length;
+    const pending = filteredClaims.filter(c => c.status === 'pending').length;
+    const denied = filteredClaims.filter(c => c.status === 'denied').length;
+    const processing = filteredClaims.filter(c => c.status === 'processing').length;
+    const resubmitted = filteredClaims.filter(c => c.status === 'resubmitted').length;
+
+    return [
+      {
+        title: 'Total Claims',
+        value: total.toString(),
+        icon: FileText,
+        color: 'blue'
+      },
+      {
+        title: 'Approved',
+        value: approved.toString(),
+        icon: CheckCircle,
+        color: 'green'
+      },
+      {
+        title: 'Pending',
+        value: (pending + processing + resubmitted).toString(),
+        icon: Clock,
+        color: 'yellow'
+      },
+      {
+        title: 'Denied',
+        value: denied.toString(),
+        icon: XCircle,
+        color: 'red'
+      }
+    ];
+  }, [filteredClaims]);
 
   const getStatColor = (color: string) => {
     switch (color) {
@@ -110,26 +187,75 @@ export default function Claims() {
     }
   };
 
+  const handleClearFilters = () => {
+    setFilters({
+      status: '',
+      payer: '',
+      provider: '',
+      patientSearch: '',
+      cptCode: '',
+      serviceStartDate: '',
+      serviceEndDate: '',
+      submissionStartDate: '',
+      submissionEndDate: '',
+      amountMin: '',
+      amountMax: ''
+    });
+  };
+
+  const handleSelectClaim = (claimId: string) => {
+    setSelectedClaims(prev => 
+      prev.includes(claimId) 
+        ? prev.filter(id => id !== claimId)
+        : [...prev, claimId]
+    );
+  };
+
+  const handleSelectAll = (selected: boolean) => {
+    setSelectedClaims(selected ? filteredClaims.map(claim => claim.id) : []);
+  };
+
+  const handleViewClaim = (claim: ClaimData) => {
+    setSelectedClaim(claim);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleEditClaim = (claim: ClaimData) => {
+    setSelectedClaim(claim);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleSaveClaim = (updatedClaim: ClaimData) => {
+    setClaims(prev => prev.map(claim => 
+      claim.id === updatedClaim.id ? updatedClaim : claim
+    ));
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Claims Management</h1>
-            <p className="text-gray-600 mt-1">Track and manage insurance claims</p>
+            <p className="text-gray-600 mt-1">Track and manage insurance claims with advanced filtering</p>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline">
               <RefreshCw className="h-4 w-4 mr-2" />
               Sync Claims
             </Button>
-            <Button>
+            <Button variant="outline">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+            <Button onClick={() => setIsNewClaimModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               New Claim
             </Button>
           </div>
         </div>
 
+        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {claimStats.map((stat, index) => {
             const IconComponent = stat.icon;
@@ -151,74 +277,43 @@ export default function Claims() {
           })}
         </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search claims..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-        </div>
+        {/* Advanced Filters */}
+        <ClaimsFilter 
+          filters={filters}
+          onFiltersChange={setFilters}
+          onClearFilters={handleClearFilters}
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="h-5 w-5 mr-2" />
-              Claims List
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4">Claim ID</th>
-                    <th className="text-left py-3 px-4">Patient</th>
-                    <th className="text-left py-3 px-4">Provider</th>
-                    <th className="text-left py-3 px-4">Date of Service</th>
-                    <th className="text-left py-3 px-4">Amount</th>
-                    <th className="text-left py-3 px-4">Payer</th>
-                    <th className="text-left py-3 px-4">Status</th>
-                    <th className="text-left py-3 px-4">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {claims.map((claim) => (
-                    <tr key={claim.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">{claim.id}</td>
-                      <td className="py-3 px-4">{claim.patient}</td>
-                      <td className="py-3 px-4">{claim.provider}</td>
-                      <td className="py-3 px-4">{claim.dateOfService}</td>
-                      <td className="py-3 px-4 font-medium text-green-600">{claim.amount}</td>
-                      <td className="py-3 px-4">{claim.payer}</td>
-                      <td className="py-3 px-4">
-                        <Badge className={getStatusColor(claim.status)}>
-                          {claim.status}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">
-                            View
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            Edit
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Enhanced Claims Table */}
+        <ClaimsTable
+          claims={filteredClaims}
+          selectedClaims={selectedClaims}
+          onSelectClaim={handleSelectClaim}
+          onSelectAll={handleSelectAll}
+          onViewClaim={handleViewClaim}
+          onEditClaim={handleEditClaim}
+        />
+
+        {/* Claim Detail Modal */}
+        <ClaimDetailModal
+          claim={selectedClaim}
+          isOpen={isDetailModalOpen}
+          onClose={() => {
+            setIsDetailModalOpen(false);
+            setSelectedClaim(null);
+          }}
+          onSave={handleSaveClaim}
+        />
+
+        {/* New Claim Modal */}
+        <Dialog open={isNewClaimModalOpen} onOpenChange={setIsNewClaimModalOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Create New Claim</DialogTitle>
+            </DialogHeader>
+            <ClaimForm />
+          </DialogContent>
+        </Dialog>
       </div>
     </MainLayout>
   );
