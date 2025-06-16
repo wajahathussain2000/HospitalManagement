@@ -1,4 +1,3 @@
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Badge } from '@/components/ui/badge';
 import { X, Plus, FileText } from 'lucide-react';
@@ -55,7 +55,11 @@ interface MedicalHistoryFormProps {
 
 export function MedicalHistoryForm({ onSubmit, onCancel, initialData }: MedicalHistoryFormProps) {
   const [newMedication, setNewMedication] = useState({ name: '', dosage: '', frequency: '' });
-  const [newAllergy, setNewAllergy] = useState({ allergen: '', reaction: '', severity: 'mild' as const });
+  const [newAllergy, setNewAllergy] = useState<{ allergen: string; reaction: string; severity: 'mild' | 'moderate' | 'severe' }>({ 
+    allergen: '', 
+    reaction: '', 
+    severity: 'mild' 
+  });
   const [newSurgery, setNewSurgery] = useState({ procedure: '', date: '', hospital: '' });
 
   const form = useForm<MedicalHistory>({
