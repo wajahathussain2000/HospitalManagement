@@ -34,9 +34,11 @@ export function ClaimsFilter({ filters, onFiltersChange, onClearFilters }: Claim
   const [savedFilters, setSavedFilters] = useState<{ name: string; filters: ClaimFilters }[]>([]);
 
   const handleFilterChange = (key: keyof ClaimFilters, value: string) => {
+    // Convert "all" back to empty string for our filter logic
+    const actualValue = value === "all" ? "" : value;
     onFiltersChange({
       ...filters,
-      [key]: value
+      [key]: actualValue
     });
   };
 
@@ -121,12 +123,12 @@ export function ClaimsFilter({ filters, onFiltersChange, onClearFilters }: Claim
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
+                <Select value={filters.status || "all"} onValueChange={(value) => handleFilterChange('status', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All statuses</SelectItem>
+                    <SelectItem value="all">All statuses</SelectItem>
                     <SelectItem value="approved">Approved</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="denied">Denied</SelectItem>
@@ -138,12 +140,12 @@ export function ClaimsFilter({ filters, onFiltersChange, onClearFilters }: Claim
 
               <div className="space-y-2">
                 <Label htmlFor="payer">Payer</Label>
-                <Select value={filters.payer} onValueChange={(value) => handleFilterChange('payer', value)}>
+                <Select value={filters.payer || "all"} onValueChange={(value) => handleFilterChange('payer', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="All payers" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All payers</SelectItem>
+                    <SelectItem value="all">All payers</SelectItem>
                     <SelectItem value="Aetna">Aetna</SelectItem>
                     <SelectItem value="BCBS">Blue Cross Blue Shield</SelectItem>
                     <SelectItem value="Medicare">Medicare</SelectItem>
@@ -155,12 +157,12 @@ export function ClaimsFilter({ filters, onFiltersChange, onClearFilters }: Claim
 
               <div className="space-y-2">
                 <Label htmlFor="provider">Provider</Label>
-                <Select value={filters.provider} onValueChange={(value) => handleFilterChange('provider', value)}>
+                <Select value={filters.provider || "all"} onValueChange={(value) => handleFilterChange('provider', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="All providers" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All providers</SelectItem>
+                    <SelectItem value="all">All providers</SelectItem>
                     <SelectItem value="Dr. Johnson">Dr. Johnson</SelectItem>
                     <SelectItem value="Dr. Smith">Dr. Smith</SelectItem>
                     <SelectItem value="Dr. Brown">Dr. Brown</SelectItem>
