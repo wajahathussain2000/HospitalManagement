@@ -5,10 +5,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ClaimsFilter } from '@/components/Claims/ClaimsFilter';
 import { ClaimsTable, ClaimData } from '@/components/Claims/ClaimsTable';
 import { ClaimDetailModal } from '@/components/Claims/ClaimDetailModal';
-import { ClaimForm } from '@/components/Billing/ClaimForm';
 import { ClaimsStats } from '@/components/Claims/ClaimsStats';
 import { ClaimsActions } from '@/components/Claims/ClaimsActions';
+import { ClaimFormWizard } from '@/components/Claims/ClaimFormWizard';
 import { useClaimsData } from '@/hooks/useClaimsData';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Claims() {
   const {
@@ -22,6 +23,7 @@ export default function Claims() {
     handleSaveClaim
   } = useClaimsData();
 
+  const { toast } = useToast();
   const [selectedClaim, setSelectedClaim] = useState<ClaimData | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isNewClaimModalOpen, setIsNewClaimModalOpen] = useState(false);
@@ -38,6 +40,18 @@ export default function Claims() {
 
   const handleNewClaim = () => {
     setIsNewClaimModalOpen(true);
+  };
+
+  const handleClaimSubmit = (claimData: any) => {
+    // Process the claim submission
+    console.log('Submitting claim:', claimData);
+    
+    toast({
+      title: "Claim Submitted Successfully",
+      description: `Claim for ${claimData.patient?.name} has been submitted for review.`,
+    });
+    
+    setIsNewClaimModalOpen(false);
   };
 
   return (
@@ -82,13 +96,15 @@ export default function Claims() {
           onSave={handleSaveClaim}
         />
 
-        {/* New Claim Modal */}
+        {/* Enhanced New Claim Modal with Wizard */}
         <Dialog open={isNewClaimModalOpen} onOpenChange={setIsNewClaimModalOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create New Claim</DialogTitle>
-            </DialogHeader>
-            <ClaimForm />
+          <DialogContent className="max-w-6xl max-h-[95vh] overflow-hidden p-0">
+            <div className="p-6">
+              <ClaimFormWizard 
+                onSubmit={handleClaimSubmit}
+                onCancel={() => setIsNewClaimModalOpen(false)}
+              />
+            </div>
           </DialogContent>
         </Dialog>
       </div>
