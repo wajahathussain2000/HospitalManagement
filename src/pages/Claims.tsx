@@ -1,7 +1,8 @@
 
 import { useState } from 'react';
 import { MainLayout } from '@/components/Layout/MainLayout';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { FloatingChatButton } from '@/components/AI/FloatingChatButton';
 import { ClaimsFilter } from '@/components/Claims/ClaimsFilter';
 import { ClaimsTable, ClaimData } from '@/components/Claims/ClaimsTable';
 import { ClaimDetailModal } from '@/components/Claims/ClaimDetailModal';
@@ -53,6 +54,13 @@ export default function Claims() {
     
     setIsNewClaimModalOpen(false);
   };
+
+  const claimsQuickActions = [
+    { label: "Analyze claim risk", prompt: "What are the risk factors for claim denials in my current claims?" },
+    { label: "Suggest CPT codes", prompt: "What are the most common CPT codes for routine office visits?" },
+    { label: "Help with appeal letter", prompt: "Help me draft an appeal letter for a denied claim" },
+    { label: "Validate ICD-10 codes", prompt: "Check if my diagnosis codes are valid and properly documented" },
+  ];
 
   return (
     <MainLayout>
@@ -107,6 +115,12 @@ export default function Claims() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* AI Chat Assistant */}
+        <FloatingChatButton 
+          context={{ type: "claims" }}
+          quickActions={claimsQuickActions}
+        />
       </div>
     </MainLayout>
   );
