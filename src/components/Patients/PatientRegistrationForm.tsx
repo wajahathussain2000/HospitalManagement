@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const personalInfoSchema = z.object({
@@ -62,20 +63,68 @@ const insuranceInfoSchema = z.object({
   subscriberDOB: z.string().optional(),
 });
 
+const optionalInfoSchema = z.object({
+  // Smoking History
+  smokingStatus: z.string().optional(),
+  smokingStartDate: z.string().optional(),
+  smokingEndDate: z.string().optional(),
+  smokingFrequency: z.string().optional(),
+  otherTobacco: z.string().optional(),
+  tobaccoStartDate: z.string().optional(),
+  tobaccoEndDate: z.string().optional(),
+  tobaccoFrequency: z.string().optional(),
+  tobaccoReviewDate: z.string().optional(),
+  smokingComments: z.string().optional(),
+  
+  // Employment Information
+  employerName: z.string().optional(),
+  employerPhone: z.string().optional(),
+  employerAddress1: z.string().optional(),
+  employerAddress2: z.string().optional(),
+  employerCity: z.string().optional(),
+  employerState: z.string().optional(),
+  employerZip: z.string().optional(),
+  
+  // Emergency Contact
+  emergencyContactName: z.string().optional(),
+  emergencyRelationship: z.string().optional(),
+  emergencyAddress1: z.string().optional(),
+  emergencyAddress2: z.string().optional(),
+  emergencyCity: z.string().optional(),
+  emergencyState: z.string().optional(),
+  emergencyZip: z.string().optional(),
+  emergencyHomePhone: z.string().optional(),
+  emergencyWorkPhone: z.string().optional(),
+  emergencyCellPhone: z.string().optional(),
+  
+  // Next of Kin
+  nextOfKinName: z.string().optional(),
+  nextOfKinRelationship: z.string().optional(),
+  nextOfKinAddress1: z.string().optional(),
+  nextOfKinAddress2: z.string().optional(),
+  nextOfKinCity: z.string().optional(),
+  nextOfKinState: z.string().optional(),
+  nextOfKinZip: z.string().optional(),
+  nextOfKinHomePhone: z.string().optional(),
+  nextOfKinWorkPhone: z.string().optional(),
+  nextOfKinCellPhone: z.string().optional(),
+});
+
 type PersonalInfo = z.infer<typeof personalInfoSchema>;
 type ContactInfo = z.infer<typeof contactInfoSchema>;
 type InsuranceInfo = z.infer<typeof insuranceInfoSchema>;
+type OptionalInfo = z.infer<typeof optionalInfoSchema>;
 
 interface PatientRegistrationFormProps {
-  onSubmit: (data: PersonalInfo & ContactInfo & InsuranceInfo) => void;
+  onSubmit: (data: PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo) => void;
   onCancel: () => void;
 }
 
 export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrationFormProps) {
   const [activeTab, setActiveTab] = useState('patient-data');
 
-  const form = useForm<PersonalInfo & ContactInfo & InsuranceInfo>({
-    resolver: zodResolver(personalInfoSchema.merge(contactInfoSchema).merge(insuranceInfoSchema)),
+  const form = useForm<PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo>({
+    resolver: zodResolver(personalInfoSchema.merge(contactInfoSchema).merge(insuranceInfoSchema).merge(optionalInfoSchema)),
     defaultValues: {
       hasInsurance: false,
     },
@@ -646,6 +695,768 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
           </div>
         </div>
       </div>
+
+      {/* Optional Information Accordions */}
+      <Accordion type="multiple" className="w-full">
+        {/* Smoking History */}
+        <AccordionItem value="smoking-history">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Smoking History
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="smokingStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Smoking:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="never">Never Smoker</SelectItem>
+                        <SelectItem value="former">Former Smoker</SelectItem>
+                        <SelectItem value="current">Current Smoker</SelectItem>
+                        <SelectItem value="unknown">Unknown</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="smokingFrequency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Frequency:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="occasional">Occasional (less than daily)</SelectItem>
+                        <SelectItem value="light">Light (1-10 per day)</SelectItem>
+                        <SelectItem value="moderate">Moderate (11-20 per day)</SelectItem>
+                        <SelectItem value="heavy">Heavy (21+ per day)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="smokingStartDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Smoking Start Date:</FormLabel>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="By Year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input className="h-8 w-24" placeholder="Age" />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="smokingEndDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">End Date:</FormLabel>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="By Year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input className="h-8 w-24" placeholder="Age" />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="otherTobacco"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Other Tobacco:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="chewing">Chewing Tobacco</SelectItem>
+                        <SelectItem value="snuff">Snuff</SelectItem>
+                        <SelectItem value="pipe">Pipe</SelectItem>
+                        <SelectItem value="cigar">Cigar</SelectItem>
+                        <SelectItem value="vape">E-Cigarette/Vape</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tobaccoFrequency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Frequency:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="occasionally">Occasionally</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tobaccoStartDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Tobacco Start Date:</FormLabel>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="By Year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input className="h-8 w-24" placeholder="Age" />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tobaccoEndDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">End Date:</FormLabel>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue placeholder="By Year" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 80 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                            <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input className="h-8 w-24" placeholder="Age" />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tobaccoReviewDate"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="text-xs">Last Tobacco Use Review Date:</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="smokingComments"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="text-xs">Smoking Comments:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Employment Information */}
+        <AccordionItem value="employment-info">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Employment Information
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="employerName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Employer Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="employerPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Employer Phone:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="employerAddress1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Address Line 1:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="employerAddress2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Address Line 2:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="employerCity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Employer City:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-2">
+                <FormField
+                  control={form.control}
+                  name="employerState"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">State:</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="AL">AL</SelectItem>
+                          <SelectItem value="AK">AK</SelectItem>
+                          <SelectItem value="AZ">AZ</SelectItem>
+                          <SelectItem value="AR">AR</SelectItem>
+                          <SelectItem value="CA">CA</SelectItem>
+                          <SelectItem value="CO">CO</SelectItem>
+                          <SelectItem value="CT">CT</SelectItem>
+                          <SelectItem value="DE">DE</SelectItem>
+                          <SelectItem value="FL">FL</SelectItem>
+                          <SelectItem value="GA">GA</SelectItem>
+                          <SelectItem value="HI">HI</SelectItem>
+                          <SelectItem value="ID">ID</SelectItem>
+                          <SelectItem value="IL">IL</SelectItem>
+                          <SelectItem value="IN">IN</SelectItem>
+                          <SelectItem value="IA">IA</SelectItem>
+                          <SelectItem value="KS">KS</SelectItem>
+                          <SelectItem value="KY">KY</SelectItem>
+                          <SelectItem value="LA">LA</SelectItem>
+                          <SelectItem value="ME">ME</SelectItem>
+                          <SelectItem value="MD">MD</SelectItem>
+                          <SelectItem value="MA">MA</SelectItem>
+                          <SelectItem value="MI">MI</SelectItem>
+                          <SelectItem value="MN">MN</SelectItem>
+                          <SelectItem value="MS">MS</SelectItem>
+                          <SelectItem value="MO">MO</SelectItem>
+                          <SelectItem value="MT">MT</SelectItem>
+                          <SelectItem value="NE">NE</SelectItem>
+                          <SelectItem value="NV">NV</SelectItem>
+                          <SelectItem value="NH">NH</SelectItem>
+                          <SelectItem value="NJ">NJ</SelectItem>
+                          <SelectItem value="NM">NM</SelectItem>
+                          <SelectItem value="NY">NY</SelectItem>
+                          <SelectItem value="NC">NC</SelectItem>
+                          <SelectItem value="ND">ND</SelectItem>
+                          <SelectItem value="OH">OH</SelectItem>
+                          <SelectItem value="OK">OK</SelectItem>
+                          <SelectItem value="OR">OR</SelectItem>
+                          <SelectItem value="PA">PA</SelectItem>
+                          <SelectItem value="RI">RI</SelectItem>
+                          <SelectItem value="SC">SC</SelectItem>
+                          <SelectItem value="SD">SD</SelectItem>
+                          <SelectItem value="TN">TN</SelectItem>
+                          <SelectItem value="TX">TX</SelectItem>
+                          <SelectItem value="UT">UT</SelectItem>
+                          <SelectItem value="VT">VT</SelectItem>
+                          <SelectItem value="VA">VA</SelectItem>
+                          <SelectItem value="WA">WA</SelectItem>
+                          <SelectItem value="WV">WV</SelectItem>
+                          <SelectItem value="WI">WI</SelectItem>
+                          <SelectItem value="WY">WY</SelectItem>
+                          <SelectItem value="DC">DC</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="employerZip"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Zip:</FormLabel>
+                      <FormControl>
+                        <Input className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Emergency Contact */}
+        <AccordionItem value="emergency-contact">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Emergency Contact
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="emergencyContactName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Contact Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emergencyRelationship"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Relationship To Patient:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="spouse">Spouse</SelectItem>
+                        <SelectItem value="parent">Parent</SelectItem>
+                        <SelectItem value="child">Child</SelectItem>
+                        <SelectItem value="sibling">Sibling</SelectItem>
+                        <SelectItem value="friend">Friend</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emergencyAddress1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Address Line 1:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emergencyAddress2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Address Line 2:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emergencyCity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">City:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-2">
+                <FormField
+                  control={form.control}
+                  name="emergencyState"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">State:</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="AL">AL</SelectItem>
+                          <SelectItem value="CA">CA</SelectItem>
+                          <SelectItem value="NY">NY</SelectItem>
+                          <SelectItem value="TX">TX</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="emergencyZip"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Zip:</FormLabel>
+                      <FormControl>
+                        <Input className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="emergencyHomePhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Home Phone:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emergencyCellPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Cell Phone:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emergencyWorkPhone"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="text-xs">Work Phone:</FormLabel>
+                    <div className="flex gap-1">
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                      <Input className="h-8 w-20" placeholder="Ex ___" />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Next of Kin */}
+        <AccordionItem value="next-of-kin">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Next of Kin
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="nextOfKinName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Contact Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nextOfKinRelationship"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Relationship To Patient:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="spouse">Spouse</SelectItem>
+                        <SelectItem value="parent">Parent</SelectItem>
+                        <SelectItem value="child">Child</SelectItem>
+                        <SelectItem value="sibling">Sibling</SelectItem>
+                        <SelectItem value="grandparent">Grandparent</SelectItem>
+                        <SelectItem value="grandchild">Grandchild</SelectItem>
+                        <SelectItem value="other">Other Relative</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nextOfKinAddress1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Address Line 1:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nextOfKinAddress2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Address Line 2:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nextOfKinCity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">City:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-2">
+                <FormField
+                  control={form.control}
+                  name="nextOfKinState"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">State:</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="AL">AL</SelectItem>
+                          <SelectItem value="CA">CA</SelectItem>
+                          <SelectItem value="NY">NY</SelectItem>
+                          <SelectItem value="TX">TX</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="nextOfKinZip"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Zip:</FormLabel>
+                      <FormControl>
+                        <Input className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="nextOfKinHomePhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Home Phone:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nextOfKinCellPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Cell Phone:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="nextOfKinWorkPhone"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="text-xs">Work Phone:</FormLabel>
+                    <div className="flex gap-1">
+                      <Input className="h-8" placeholder="(___) ___-____" {...field} />
+                      <Input className="h-8 w-20" placeholder="Ex ___" />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 
