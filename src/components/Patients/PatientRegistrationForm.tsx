@@ -212,6 +212,9 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
+                    <SelectItem value="undisclosed">Undisclosed</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -276,8 +279,15 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   <SelectContent>
                     <SelectItem value="jr">Jr.</SelectItem>
                     <SelectItem value="sr">Sr.</SelectItem>
+                    <SelectItem value="i">I</SelectItem>
                     <SelectItem value="ii">II</SelectItem>
                     <SelectItem value="iii">III</SelectItem>
+                    <SelectItem value="iv">IV</SelectItem>
+                    <SelectItem value="v">V</SelectItem>
+                    <SelectItem value="esq">Esq.</SelectItem>
+                    <SelectItem value="phd">PhD</SelectItem>
+                    <SelectItem value="md">MD</SelectItem>
+                    <SelectItem value="dds">DDS</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -300,11 +310,22 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="single">Single</SelectItem>
                     <SelectItem value="married">Married</SelectItem>
-                    <SelectItem value="divorced">Divorced</SelectItem>
-                    <SelectItem value="widowed">Widowed</SelectItem>
                     <SelectItem value="separated">Separated</SelectItem>
+                    <SelectItem value="unmarried">Unmarried</SelectItem>
+                    <SelectItem value="common-law">Common law</SelectItem>
+                    <SelectItem value="divorced">Divorced</SelectItem>
+                    <SelectItem value="legally-separated">Legally Separated</SelectItem>
+                    <SelectItem value="living-together">Living together</SelectItem>
+                    <SelectItem value="interlocutory">Interlocutory</SelectItem>
+                    <SelectItem value="annulled">Annulled</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="domestic-partner">Domestic partner</SelectItem>
+                    <SelectItem value="registered-domestic-partner">Registered domestic partner</SelectItem>
+                    <SelectItem value="single">Single</SelectItem>
+                    <SelectItem value="unreported">Unreported</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
+                    <SelectItem value="widowed">Widowed</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -325,10 +346,17 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="employed">Employed</SelectItem>
+                    <SelectItem value="full-time-employed">Full time employed</SelectItem>
+                    <SelectItem value="part-time-employed">Part time employed</SelectItem>
                     <SelectItem value="unemployed">Unemployed</SelectItem>
+                    <SelectItem value="self-employed">Self-employed</SelectItem>
                     <SelectItem value="retired">Retired</SelectItem>
-                    <SelectItem value="student">Student</SelectItem>
+                    <SelectItem value="active-military">On active military duty</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
+                    <SelectItem value="contract-per-diem">Contract, per diem</SelectItem>
+                    <SelectItem value="leave-of-absence">Leave of absence (e.g., family leave, sabbatical, etc.)</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="temporarily-unemployed">Temporarily unemployed</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -365,6 +393,20 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   <SelectContent>
                     <SelectItem value="english">English</SelectItem>
                     <SelectItem value="spanish">Spanish</SelectItem>
+                    <SelectItem value="french">French</SelectItem>
+                    <SelectItem value="german">German</SelectItem>
+                    <SelectItem value="chinese">Chinese (Mandarin)</SelectItem>
+                    <SelectItem value="cantonese">Chinese (Cantonese)</SelectItem>
+                    <SelectItem value="arabic">Arabic</SelectItem>
+                    <SelectItem value="portuguese">Portuguese</SelectItem>
+                    <SelectItem value="russian">Russian</SelectItem>
+                    <SelectItem value="japanese">Japanese</SelectItem>
+                    <SelectItem value="korean">Korean</SelectItem>
+                    <SelectItem value="vietnamese">Vietnamese</SelectItem>
+                    <SelectItem value="tagalog">Tagalog</SelectItem>
+                    <SelectItem value="italian">Italian</SelectItem>
+                    <SelectItem value="polish">Polish</SelectItem>
+                    <SelectItem value="hindi">Hindi</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -387,10 +429,28 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="christian">Christian</SelectItem>
+                    <SelectItem value="catholic">Catholic</SelectItem>
+                    <SelectItem value="protestant">Protestant</SelectItem>
+                    <SelectItem value="baptist">Baptist</SelectItem>
+                    <SelectItem value="methodist">Methodist</SelectItem>
+                    <SelectItem value="lutheran">Lutheran</SelectItem>
                     <SelectItem value="jewish">Jewish</SelectItem>
                     <SelectItem value="muslim">Muslim</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="islam">Islam</SelectItem>
+                    <SelectItem value="hindu">Hindu</SelectItem>
+                    <SelectItem value="buddhist">Buddhist</SelectItem>
+                    <SelectItem value="sikh">Sikh</SelectItem>
+                    <SelectItem value="jain">Jain</SelectItem>
+                    <SelectItem value="mormon">Mormon (LDS)</SelectItem>
+                    <SelectItem value="jehovah-witness">Jehovah's Witness</SelectItem>
+                    <SelectItem value="seventh-day-adventist">Seventh-day Adventist</SelectItem>
+                    <SelectItem value="orthodox">Orthodox</SelectItem>
+                    <SelectItem value="agnostic">Agnostic</SelectItem>
+                    <SelectItem value="atheist">Atheist</SelectItem>
+                    <SelectItem value="spiritual">Spiritual but not religious</SelectItem>
                     <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="decline">Decline to answer</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -413,7 +473,15 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="transgender-male">Transgender Male</SelectItem>
+                    <SelectItem value="transgender-female">Transgender Female</SelectItem>
                     <SelectItem value="non-binary">Non-Binary</SelectItem>
+                    <SelectItem value="genderqueer">Genderqueer</SelectItem>
+                    <SelectItem value="gender-fluid">Gender Fluid</SelectItem>
+                    <SelectItem value="agender">Agender</SelectItem>
+                    <SelectItem value="two-spirit">Two-Spirit</SelectItem>
+                    <SelectItem value="questioning">Questioning</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -435,9 +503,15 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="heterosexual">Heterosexual</SelectItem>
-                    <SelectItem value="homosexual">Homosexual</SelectItem>
+                    <SelectItem value="heterosexual">Heterosexual/Straight</SelectItem>
+                    <SelectItem value="gay">Gay</SelectItem>
+                    <SelectItem value="lesbian">Lesbian</SelectItem>
                     <SelectItem value="bisexual">Bisexual</SelectItem>
+                    <SelectItem value="pansexual">Pansexual</SelectItem>
+                    <SelectItem value="asexual">Asexual</SelectItem>
+                    <SelectItem value="queer">Queer</SelectItem>
+                    <SelectItem value="questioning">Questioning</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -461,6 +535,13 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   <SelectContent>
                     <SelectItem value="hispanic">Hispanic or Latino</SelectItem>
                     <SelectItem value="not-hispanic">Not Hispanic or Latino</SelectItem>
+                    <SelectItem value="mexican">Mexican</SelectItem>
+                    <SelectItem value="puerto-rican">Puerto Rican</SelectItem>
+                    <SelectItem value="cuban">Cuban</SelectItem>
+                    <SelectItem value="central-american">Central American</SelectItem>
+                    <SelectItem value="south-american">South American</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
+                    <SelectItem value="decline">Decline to answer</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -484,8 +565,21 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                     <SelectItem value="white">White</SelectItem>
                     <SelectItem value="black">Black or African American</SelectItem>
                     <SelectItem value="asian">Asian</SelectItem>
+                    <SelectItem value="asian-indian">Asian Indian</SelectItem>
+                    <SelectItem value="chinese">Chinese</SelectItem>
+                    <SelectItem value="filipino">Filipino</SelectItem>
+                    <SelectItem value="japanese">Japanese</SelectItem>
+                    <SelectItem value="korean">Korean</SelectItem>
+                    <SelectItem value="vietnamese">Vietnamese</SelectItem>
                     <SelectItem value="native">American Indian or Alaska Native</SelectItem>
                     <SelectItem value="pacific">Native Hawaiian or Pacific Islander</SelectItem>
+                    <SelectItem value="native-hawaiian">Native Hawaiian</SelectItem>
+                    <SelectItem value="guamanian">Guamanian or Chamorro</SelectItem>
+                    <SelectItem value="samoan">Samoan</SelectItem>
+                    <SelectItem value="other-pacific">Other Pacific Islander</SelectItem>
+                    <SelectItem value="multiracial">Two or More Races</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
+                    <SelectItem value="decline">Decline to answer</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -507,6 +601,19 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="cherokee">Cherokee</SelectItem>
+                    <SelectItem value="navajo">Navajo</SelectItem>
+                    <SelectItem value="sioux">Sioux</SelectItem>
+                    <SelectItem value="chippewa">Chippewa</SelectItem>
+                    <SelectItem value="choctaw">Choctaw</SelectItem>
+                    <SelectItem value="apache">Apache</SelectItem>
+                    <SelectItem value="pueblo">Pueblo</SelectItem>
+                    <SelectItem value="iroquois">Iroquois</SelectItem>
+                    <SelectItem value="creek">Creek</SelectItem>
+                    <SelectItem value="blackfeet">Blackfeet</SelectItem>
+                    <SelectItem value="seminole">Seminole</SelectItem>
+                    <SelectItem value="cheyenne">Cheyenne</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -610,10 +717,57 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="AL">AL</SelectItem>
-                      <SelectItem value="CA">CA</SelectItem>
-                      <SelectItem value="NY">NY</SelectItem>
-                      <SelectItem value="TX">TX</SelectItem>
+                      <SelectItem value="AL">AL - Alabama</SelectItem>
+                      <SelectItem value="AK">AK - Alaska</SelectItem>
+                      <SelectItem value="AZ">AZ - Arizona</SelectItem>
+                      <SelectItem value="AR">AR - Arkansas</SelectItem>
+                      <SelectItem value="CA">CA - California</SelectItem>
+                      <SelectItem value="CO">CO - Colorado</SelectItem>
+                      <SelectItem value="CT">CT - Connecticut</SelectItem>
+                      <SelectItem value="DE">DE - Delaware</SelectItem>
+                      <SelectItem value="FL">FL - Florida</SelectItem>
+                      <SelectItem value="GA">GA - Georgia</SelectItem>
+                      <SelectItem value="HI">HI - Hawaii</SelectItem>
+                      <SelectItem value="ID">ID - Idaho</SelectItem>
+                      <SelectItem value="IL">IL - Illinois</SelectItem>
+                      <SelectItem value="IN">IN - Indiana</SelectItem>
+                      <SelectItem value="IA">IA - Iowa</SelectItem>
+                      <SelectItem value="KS">KS - Kansas</SelectItem>
+                      <SelectItem value="KY">KY - Kentucky</SelectItem>
+                      <SelectItem value="LA">LA - Louisiana</SelectItem>
+                      <SelectItem value="ME">ME - Maine</SelectItem>
+                      <SelectItem value="MD">MD - Maryland</SelectItem>
+                      <SelectItem value="MA">MA - Massachusetts</SelectItem>
+                      <SelectItem value="MI">MI - Michigan</SelectItem>
+                      <SelectItem value="MN">MN - Minnesota</SelectItem>
+                      <SelectItem value="MS">MS - Mississippi</SelectItem>
+                      <SelectItem value="MO">MO - Missouri</SelectItem>
+                      <SelectItem value="MT">MT - Montana</SelectItem>
+                      <SelectItem value="NE">NE - Nebraska</SelectItem>
+                      <SelectItem value="NV">NV - Nevada</SelectItem>
+                      <SelectItem value="NH">NH - New Hampshire</SelectItem>
+                      <SelectItem value="NJ">NJ - New Jersey</SelectItem>
+                      <SelectItem value="NM">NM - New Mexico</SelectItem>
+                      <SelectItem value="NY">NY - New York</SelectItem>
+                      <SelectItem value="NC">NC - North Carolina</SelectItem>
+                      <SelectItem value="ND">ND - North Dakota</SelectItem>
+                      <SelectItem value="OH">OH - Ohio</SelectItem>
+                      <SelectItem value="OK">OK - Oklahoma</SelectItem>
+                      <SelectItem value="OR">OR - Oregon</SelectItem>
+                      <SelectItem value="PA">PA - Pennsylvania</SelectItem>
+                      <SelectItem value="RI">RI - Rhode Island</SelectItem>
+                      <SelectItem value="SC">SC - South Carolina</SelectItem>
+                      <SelectItem value="SD">SD - South Dakota</SelectItem>
+                      <SelectItem value="TN">TN - Tennessee</SelectItem>
+                      <SelectItem value="TX">TX - Texas</SelectItem>
+                      <SelectItem value="UT">UT - Utah</SelectItem>
+                      <SelectItem value="VT">VT - Vermont</SelectItem>
+                      <SelectItem value="VA">VA - Virginia</SelectItem>
+                      <SelectItem value="WA">WA - Washington</SelectItem>
+                      <SelectItem value="WV">WV - West Virginia</SelectItem>
+                      <SelectItem value="WI">WI - Wisconsin</SelectItem>
+                      <SelectItem value="WY">WY - Wyoming</SelectItem>
+                      <SelectItem value="DC">DC - District of Columbia</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -694,9 +848,11 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="home">Home</SelectItem>
-                    <SelectItem value="work">Work</SelectItem>
-                    <SelectItem value="cell">Cell</SelectItem>
+                    <SelectItem value="home">Home Phone</SelectItem>
+                    <SelectItem value="work">Work Phone</SelectItem>
+                    <SelectItem value="cell">Cell Phone</SelectItem>
+                    <SelectItem value="fax">Fax</SelectItem>
+                    <SelectItem value="none">No Preference</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -745,9 +901,12 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="phone">Phone</SelectItem>
+                    <SelectItem value="phone">Phone Call</SelectItem>
                     <SelectItem value="email">Email</SelectItem>
-                    <SelectItem value="text">Text Message</SelectItem>
+                    <SelectItem value="text">Text Message (SMS)</SelectItem>
+                    <SelectItem value="mail">Physical Mail</SelectItem>
+                    <SelectItem value="portal">Patient Portal</SelectItem>
+                    <SelectItem value="none">No Preference</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
