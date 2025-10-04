@@ -108,6 +108,20 @@ const optionalInfoSchema = z.object({
   nextOfKinHomePhone: z.string().optional(),
   nextOfKinWorkPhone: z.string().optional(),
   nextOfKinCellPhone: z.string().optional(),
+  
+  // User Defined Fields
+  userField1: z.string().optional(),
+  userField2: z.string().optional(),
+  userField3: z.string().optional(),
+  userField4: z.string().optional(),
+  userField5: z.string().optional(),
+  userField6: z.string().optional(),
+  
+  // Account Status
+  patientStartDate: z.string().optional(),
+  patientEndDate: z.string().optional(),
+  exemptFromReporting: z.boolean().optional(),
+  confidentialHealthInfo: z.boolean().optional(),
 });
 
 type PersonalInfo = z.infer<typeof personalInfoSchema>;
@@ -118,9 +132,10 @@ type OptionalInfo = z.infer<typeof optionalInfoSchema>;
 interface PatientRegistrationFormProps {
   onSubmit: (data: PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo) => void;
   onCancel: () => void;
+  onEnrollPHR?: (data: PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo) => void;
 }
 
-export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrationFormProps) {
+export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: PatientRegistrationFormProps) {
   const [activeTab, setActiveTab] = useState('patient-data');
 
   const form = useForm<PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo>({
@@ -1456,6 +1471,176 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
             </div>
           </AccordionContent>
         </AccordionItem>
+
+        {/* User Defined Fields */}
+        <AccordionItem value="user-defined-fields">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            User Defined Fields
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="userField1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Field 1:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="userField4"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Field 4:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="userField2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Field 2:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="userField5"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Field 5:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="userField3"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Field 3:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="userField6"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Field 6:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Account Status */}
+        <AccordionItem value="account-status">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Account Status
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-4 pt-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                <FormField
+                  control={form.control}
+                  name="patientStartDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Patient Start Date: *</FormLabel>
+                      <FormControl>
+                        <Input type="date" className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="patientEndDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Patient End Date:</FormLabel>
+                      <FormControl>
+                        <Input type="date" className="h-8" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="exemptFromReporting"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="text-xs">This patient is exempt from all reporting functions.</FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="confidentialHealthInfo"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="text-xs">This patient's health information is confidential.</FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );
@@ -1588,8 +1773,21 @@ export function PatientRegistrationForm({ onSubmit, onCancel }: PatientRegistrat
                 <Button type="button" variant="outline" onClick={onCancel}>
                   Cancel
                 </Button>
-                <Button type="submit">
-                  Complete Registration
+                <Button type="submit" variant="outline">
+                  Add Patient
+                </Button>
+                <Button 
+                  type="button" 
+                  onClick={() => {
+                    const data = form.getValues();
+                    if (onEnrollPHR) {
+                      onEnrollPHR(data);
+                    } else {
+                      onSubmit(data);
+                    }
+                  }}
+                >
+                  Add + Enroll in PHR
                 </Button>
               </div>
             </CardContent>
