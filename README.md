@@ -1,73 +1,135 @@
-# Welcome to your Lovable project
+# Medical Billing Management System
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/7a024f2c-2a95-4500-b77e-2a11651e2ea3
+A comprehensive, AI-powered medical billing management system designed for healthcare practices. This system combines modern web technologies with advanced AI capabilities to streamline revenue cycle management, patient care coordination, and administrative efficiency.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+### Core Modules
+- **Dashboard**: Real-time metrics, AI insights, and activity tracking
+- **Claims Management**: Advanced filtering, AI analysis, and bulk operations
+- **Patient Management**: Registration, medical history, and comprehensive records
+- **Billing & Revenue**: Financial metrics, payment processing, and A/R management
+- **Clinical Management**: AI documentation, medical coding, and clinical workflows
+- **Scheduling**: Appointment management and provider availability
 
-**Use Lovable**
+### AI-Powered Capabilities
+- **Denial Analytics**: Predictive denial risk assessment
+- **Clinical Coding**: AI-assisted medical code suggestions
+- **Voice Transcription**: Speech-to-text for clinical notes
+- **Documentation Assistant**: Smart templates and auto-completion
+- **Decision Support**: Evidence-based treatment recommendations
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7a024f2c-2a95-4500-b77e-2a11651e2ea3) and start prompting.
+## Technology Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18 with TypeScript
+- **Build Tool**: Vite with SWC
+- **UI Framework**: shadcn/ui with Radix UI primitives
+- **Styling**: Tailwind CSS
+- **State Management**: React Query (TanStack Query)
+- **Routing**: React Router DOM v6
+- **Form Handling**: React Hook Form with Zod validation
+- **Charts**: Recharts for data visualization
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn package manager
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd MedicalBilling
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install dependencies:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser and navigate to `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Available Scripts
 
-**Use GitHub Codespaces**
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/
+│   ├── Layout/          # Main layout components
+│   ├── Dashboard/       # Dashboard-specific components
+│   ├── Claims/          # Claims management components
+│   ├── Patients/        # Patient management components
+│   ├── Billing/         # Billing and revenue components
+│   ├── Clinical/        # Clinical management components
+│   └── ui/             # Reusable UI components
+├── pages/              # Main page components
+├── hooks/              # Custom React hooks
+├── types/              # TypeScript type definitions
+└── lib/                # Utility functions
+```
 
-This project is built with:
+## Key Features
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Claims Management
+- Advanced filtering and search capabilities
+- AI-powered denial prediction and optimization
+- Bulk operations for efficiency
+- Real-time status tracking
 
-## How can I deploy this project?
+### Patient Management
+- Comprehensive patient registration
+- Medical history and documentation
+- Advanced search and filtering
+- Integrated appointment scheduling
 
-Simply open [Lovable](https://lovable.dev/projects/7a024f2c-2a95-4500-b77e-2a11651e2ea3) and click on Share -> Publish.
+### Billing & Revenue
+- Financial metrics and A/R management
+- Multiple payment method support
+- Automated claim processing
+- Insurance eligibility verification
 
-## Can I connect a custom domain to my Lovable project?
+### Clinical Management
+- AI-powered documentation
+- Medical coding assistance
+- Clinical decision support
+- Voice-to-text transcription
 
-Yes, you can!
+## Development
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+This project follows modern React best practices with:
+- TypeScript for type safety
+- Component-based architecture
+- Custom hooks for reusable logic
+- Responsive design with Tailwind CSS
+- Accessibility compliance with Radix UI
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Deployment
+
+The application can be deployed to any static hosting service or containerized environment. The build process creates optimized production assets ready for deployment.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## License
+
+This project is proprietary software. All rights reserved.
