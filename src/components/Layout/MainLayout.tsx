@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import AIChatAssistant from '../AI/AIChatAssistant';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -25,6 +26,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           </main>
         </div>
       </div>
+      
+      {/* AI Chat Assistant */}
+      <AIChatAssistant />
     </div>
   );
 }

@@ -22,12 +22,12 @@ export function Header({ onMenuClick }: HeaderProps) {
           </Button>
         </div>
         
-        <div className="flex-1 flex justify-center">
-          <div className="relative">
+        <div className="flex-1 flex justify-start">
+          <div className="relative ml-72">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
-              placeholder="Search patients, claims, or procedures..." 
-              className="pl-10 w-96 bg-gray-50 border-gray-200"
+              placeholder="Search hospital records, staff, or departments..." 
+              className="pl-10 w-80 bg-gray-50 border-gray-200"
             />
           </div>
         </div>
@@ -41,7 +41,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           </Button>
           <Button variant="ghost" size="sm">
             <User className="h-5 w-5" />
-            <span className="ml-2 hidden md:inline">Dr. Smith</span>
+            <span className="ml-2 hidden md:inline">Hospital Admin</span>
           </Button>
         </div>
       </div>

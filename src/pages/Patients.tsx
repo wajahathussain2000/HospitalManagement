@@ -9,6 +9,9 @@ import { PatientRegistrationForm } from '@/components/Patients/PatientRegistrati
 import { MedicalHistoryForm } from '@/components/Patients/MedicalHistoryForm';
 import { PatientSearchSystem } from '@/components/Patients/PatientSearchSystem';
 import { PatientDashboard } from '@/components/Patients/PatientDashboard';
+import { EditPatientForm } from '@/components/Patients/EditPatientForm';
+import { ScheduleAppointmentForm } from '@/components/Patients/ScheduleAppointmentForm';
+import { VitalSignsForm } from '@/components/Patients/VitalSignsForm';
 import { 
   Users, 
   Plus, 
@@ -16,7 +19,19 @@ import {
   Edit,
   Calendar,
   Phone,
-  Mail
+  Mail,
+  Settings,
+  Search,
+  Filter,
+  X,
+  Eye,
+  MessageSquare,
+  Stethoscope,
+  CreditCard,
+  AlertCircle,
+  Clock,
+  MapPin,
+  Shield
 } from 'lucide-react';
 
 // Expanded patient data structure
@@ -70,7 +85,11 @@ const patients = [
         type: 'Insurance',
         date: '2024-01-01'
       }
-    ]
+    ],
+    totalVisits: 12,
+    outstandingBalance: 150.00,
+    riskLevel: 'medium' as const,
+    preferredProvider: 'Dr. Johnson'
   },
   {
     id: 'PT-002',
@@ -109,7 +128,11 @@ const patients = [
         type: 'Medical Report',
         date: '2024-01-10'
       }
-    ]
+    ],
+    totalVisits: 8,
+    outstandingBalance: 0,
+    riskLevel: 'low' as const,
+    preferredProvider: 'Dr. Williams'
   },
   {
     id: 'PT-003',
@@ -148,7 +171,102 @@ const patients = [
         type: 'Cardiac Test',
         date: '2024-01-05'
       }
-    ]
+    ],
+    totalVisits: 25,
+    outstandingBalance: 75.00,
+    riskLevel: 'high' as const,
+    preferredProvider: 'Dr. Chen'
+  },
+  {
+    id: 'PT-004',
+    name: 'Emily Davis',
+    age: 28,
+    dateOfBirth: '1996-05-12',
+    phone: '(555) 456-7890',
+    email: 'emily.davis@email.com',
+    address: '321 Elm St, Newtown, ST 24680',
+    lastVisit: '2024-01-20',
+    status: 'active' as const,
+    insurance: 'UnitedHealth',
+    nextAppointment: '2024-02-25',
+    emergencyContact: {
+      name: 'Robert Davis',
+      phone: '(555) 456-7891',
+      relation: 'Father'
+    },
+    medicalInfo: {
+      allergies: ['Peanuts'],
+      medications: ['Albuterol'],
+      conditions: ['Asthma']
+    },
+    appointments: [
+      {
+        date: '2024-02-25',
+        time: '11:00 AM',
+        type: 'Routine Checkup',
+        status: 'confirmed',
+        provider: 'Dr. Anderson'
+      }
+    ],
+    documents: [
+      {
+        name: 'Insurance Card',
+        type: 'Insurance',
+        date: '2024-01-01'
+      }
+    ],
+    totalVisits: 5,
+    outstandingBalance: 0,
+    riskLevel: 'low' as const,
+    preferredProvider: 'Dr. Anderson'
+  },
+  {
+    id: 'PT-005',
+    name: 'David Wilson',
+    age: 52,
+    dateOfBirth: '1972-09-30',
+    phone: '(555) 567-8901',
+    email: 'david.wilson@email.com',
+    address: '654 Maple Dr, Springfield, ST 97531',
+    lastVisit: '2024-01-18',
+    status: 'active' as const,
+    insurance: 'Cigna',
+    nextAppointment: '2024-03-01',
+    emergencyContact: {
+      name: 'Susan Wilson',
+      phone: '(555) 567-8902',
+      relation: 'Wife'
+    },
+    medicalInfo: {
+      allergies: [],
+      medications: ['Simvastatin', 'Amlodipine'],
+      conditions: ['High Cholesterol', 'Hypertension']
+    },
+    appointments: [
+      {
+        date: '2024-03-01',
+        time: '9:00 AM',
+        type: 'Cardiology Consultation',
+        status: 'confirmed',
+        provider: 'Dr. Thompson'
+      }
+    ],
+    documents: [
+      {
+        name: 'Insurance Card',
+        type: 'Insurance',
+        date: '2024-01-01'
+      },
+      {
+        name: 'Lab Results',
+        type: 'Medical Records',
+        date: '2024-01-18'
+      }
+    ],
+    totalVisits: 18,
+    outstandingBalance: 225.50,
+    riskLevel: 'medium' as const,
+    preferredProvider: 'Dr. Thompson'
   }
 ];
 
@@ -157,6 +275,15 @@ export default function Patients() {
   const [showMedicalHistory, setShowMedicalHistory] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<typeof patients[0] | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'dashboard'>('list');
+  
+  // New form states
+  const [showEditPatient, setShowEditPatient] = useState(false);
+  const [showScheduleAppointment, setShowScheduleAppointment] = useState(false);
+  const [showVitalSigns, setShowVitalSigns] = useState(false);
+  const [showProgressNotes, setShowProgressNotes] = useState(false);
+  const [showTreatmentPlan, setShowTreatmentPlan] = useState(false);
+  const [showMessaging, setShowMessaging] = useState(false);
+  const [showDocumentUpload, setShowDocumentUpload] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -188,6 +315,84 @@ export default function Patients() {
     setViewMode('list');
   };
 
+  const handleEditPatient = () => {
+    setShowEditPatient(true);
+  };
+
+  const handleScheduleAppointment = () => {
+    setShowScheduleAppointment(true);
+  };
+
+  const handleViewMedicalHistory = () => {
+    setShowMedicalHistory(true);
+  };
+
+  const handleVitalSigns = () => {
+    setShowVitalSigns(true);
+  };
+
+  const handleProgressNotes = () => {
+    setShowProgressNotes(true);
+  };
+
+  const handleTreatmentPlan = () => {
+    setShowTreatmentPlan(true);
+  };
+
+  const handleSendMessage = () => {
+    setShowMessaging(true);
+  };
+
+  const handleVerifyCoverage = () => {
+    console.log('Verifying coverage for:', selectedPatient?.id);
+    // In a real app, this would make an API call to verify insurance
+    alert(`Insurance coverage verified for ${selectedPatient?.name}`);
+  };
+
+  const handleDownloadCard = () => {
+    console.log('Downloading insurance card for:', selectedPatient?.id);
+    // In a real app, this would generate and download the insurance card
+    alert(`Insurance card downloaded for ${selectedPatient?.name}`);
+  };
+
+  const handleUploadDocument = () => {
+    setShowDocumentUpload(true);
+  };
+
+  const handleViewDocument = (documentName: string) => {
+    console.log('Viewing document:', documentName);
+    // In a real app, this would open the document viewer
+    alert(`Opening document: ${documentName}`);
+  };
+
+  const handleDownloadDocument = (documentName: string) => {
+    console.log('Downloading document:', documentName);
+    // In a real app, this would download the document
+    alert(`Downloading document: ${documentName}`);
+  };
+
+  // New handlers for form submissions
+  const handleEditPatientSave = (updatedPatient: any) => {
+    console.log('Patient updated:', updatedPatient);
+    setShowEditPatient(false);
+    // In a real app, this would update the patient in the database
+    alert(`Patient ${updatedPatient.name} updated successfully!`);
+  };
+
+  const handleAppointmentScheduled = (appointment: any) => {
+    console.log('Appointment scheduled:', appointment);
+    setShowScheduleAppointment(false);
+    // In a real app, this would save the appointment to the database
+    alert(`Appointment scheduled for ${appointment.date} at ${appointment.time} with ${appointment.provider}`);
+  };
+
+  const handleVitalSignsSaved = (vitals: any) => {
+    console.log('Vital signs saved:', vitals);
+    setShowVitalSigns(false);
+    // In a real app, this would save the vital signs to the database
+    alert(`Vital signs recorded successfully for ${selectedPatient?.name}`);
+  };
+
   if (viewMode === 'dashboard' && selectedPatient) {
     return (
       <MainLayout>
@@ -200,10 +405,47 @@ export default function Patients() {
           
           <PatientDashboard
             patient={selectedPatient}
-            onEdit={() => console.log('Edit patient')}
-            onScheduleAppointment={() => console.log('Schedule appointment')}
-            onViewMedicalHistory={() => setShowMedicalHistory(true)}
+            onEdit={handleEditPatient}
+            onScheduleAppointment={handleScheduleAppointment}
+            onViewMedicalHistory={handleViewMedicalHistory}
+            onVitalSigns={handleVitalSigns}
+            onProgressNotes={handleProgressNotes}
+            onTreatmentPlan={handleTreatmentPlan}
+            onSendMessage={handleSendMessage}
+            onVerifyCoverage={handleVerifyCoverage}
+            onDownloadCard={handleDownloadCard}
+            onUploadDocument={handleUploadDocument}
+            onViewDocument={handleViewDocument}
+            onDownloadDocument={handleDownloadDocument}
           />
+
+          {/* Real Working Forms */}
+          {selectedPatient && (
+            <>
+              <EditPatientForm
+                patient={selectedPatient}
+                isOpen={showEditPatient}
+                onClose={() => setShowEditPatient(false)}
+                onSave={handleEditPatientSave}
+              />
+              
+              <ScheduleAppointmentForm
+                patientId={selectedPatient.id}
+                patientName={selectedPatient.name}
+                isOpen={showScheduleAppointment}
+                onClose={() => setShowScheduleAppointment(false)}
+                onSchedule={handleAppointmentScheduled}
+              />
+              
+              <VitalSignsForm
+                patientId={selectedPatient.id}
+                patientName={selectedPatient.name}
+                isOpen={showVitalSigns}
+                onClose={() => setShowVitalSigns(false)}
+                onSave={handleVitalSignsSaved}
+              />
+            </>
+          )}
         </div>
       </MainLayout>
     );
@@ -223,15 +465,32 @@ export default function Patients() {
           </Button>
         </div>
 
-        {/* Patient Search and Management */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Users className="h-5 w-5 mr-2" />
-              Patient Directory
-            </CardTitle>
+        {/* Enhanced Patient Directory */}
+        <Card className="shadow-lg">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Users className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Patient Directory</CardTitle>
+                  <p className="text-sm text-gray-600 mt-1">Manage and track patient information efficiently</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
             <PatientSearchSystem
               patients={patients}
               onPatientSelect={handlePatientSelect}

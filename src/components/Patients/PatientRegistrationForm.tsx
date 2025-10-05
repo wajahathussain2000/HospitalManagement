@@ -54,14 +54,90 @@ const contactInfoSchema = z.object({
   communicationPreference: z.string().optional(),
 });
 
-const insuranceInfoSchema = z.object({
-  hasInsurance: z.boolean(),
-  primaryInsurance: z.string().optional(),
-  policyNumber: z.string().optional(),
-  groupNumber: z.string().optional(),
-  subscriberName: z.string().optional(),
-  subscriberDOB: z.string().optional(),
+const eligibilityBenefitsSchema = z.object({
+  lastCheckedOn: z.string().optional(),
+  eligibilityCheckFrequency: z.string().optional(),
+  eligibilityBenefitPayerName: z.string().optional(),
+  automatedEligibility: z.boolean().optional(),
 });
+
+const primaryInsuranceSchema = z.object({
+  patientInsuranceType: z.string().optional(),
+  insuranceCompany: z.string().optional(),
+  insuranceName: z.string().optional(),
+  primaryInsured: z.string().optional(),
+  lastName: z.string().optional(),
+  firstName: z.string().optional(),
+  middleInitial: z.string().optional(),
+  patientRelationshipToPrimaryInsured: z.string().optional(),
+  capitation: z.string().optional(),
+  subscriberId: z.string().optional(),
+  groupNumber: z.string().optional(),
+  planName: z.string().optional(),
+  insuredAuthorization: z.string().optional(),
+  deductible: z.string().optional(),
+  visitCoPayment: z.string().optional(),
+  signatureOnFile: z.string().optional(),
+  signatureDate: z.string().optional(),
+});
+
+const authorizationSchema = z.object({
+  authorizationNumber: z.string().optional(),
+  numberOfVisitsAuthorized: z.string().optional(),
+  effectiveStartDate: z.string().optional(),
+  effectiveStopDate: z.string().optional(),
+  numberOfVisitsUsed: z.string().optional(),
+  numberOfVisitsLeft: z.string().optional(),
+});
+
+const secondaryInsuranceSchema = z.object({
+  patientInsuranceType: z.string().optional(),
+  insuranceCompany: z.string().optional(),
+  insuranceName: z.string().optional(),
+  secondaryInsured: z.string().optional(),
+  lastName: z.string().optional(),
+  firstName: z.string().optional(),
+  middleInitial: z.string().optional(),
+  patientRelationshipToSecondaryInsured: z.string().optional(),
+  subscriberId: z.string().optional(),
+  groupNumber: z.string().optional(),
+  planName: z.string().optional(),
+  secondaryInsuredAuthorization: z.string().optional(),
+  deductible: z.string().optional(),
+  visitCoPayment: z.string().optional(),
+  signatureOnFile: z.string().optional(),
+  signatureDate: z.string().optional(),
+});
+
+const thirdInsuranceSchema = z.object({
+  patientInsuranceType: z.string().optional(),
+  insuranceCompany: z.string().optional(),
+  insuranceName: z.string().optional(),
+  thirdInsured: z.string().optional(),
+  lastName: z.string().optional(),
+  firstName: z.string().optional(),
+  middleInitial: z.string().optional(),
+  patientRelationshipToThirdInsured: z.string().optional(),
+  subscriberId: z.string().optional(),
+  groupNumber: z.string().optional(),
+  planName: z.string().optional(),
+  deductible: z.string().optional(),
+  visitCoPayment: z.string().optional(),
+});
+
+const guarantorInfoSchema = z.object({
+  guarantor: z.string().optional(),
+  lastName: z.string().optional(),
+  firstName: z.string().optional(),
+  middleInitial: z.string().optional(),
+});
+
+const insuranceInfoSchema = eligibilityBenefitsSchema
+  .merge(primaryInsuranceSchema)
+  .merge(authorizationSchema)
+  .merge(secondaryInsuranceSchema)
+  .merge(thirdInsuranceSchema)
+  .merge(guarantorInfoSchema);
 
 const optionalInfoSchema = z.object({
   // Smoking History
@@ -141,7 +217,9 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
   const form = useForm<PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo>({
     resolver: zodResolver(personalInfoSchema.merge(contactInfoSchema).merge(insuranceInfoSchema).merge(optionalInfoSchema)),
     defaultValues: {
-      hasInsurance: false,
+      automatedEligibility: false,
+      exemptFromReporting: false,
+      confidentialHealthInfo: false,
     },
   });
 
@@ -151,16 +229,16 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
 
   const renderPersonalInfo = () => (
     <div className="space-y-6">
-      {/* Patient Demographics */}
+      {/* Personal Information */}
       <div>
-        <h3 className="text-sm font-semibold text-primary mb-4">Patient Demographics:</h3>
+        <h3 className="text-sm font-semibold text-primary mb-4">Personal Information & Demographics:</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
           <FormField
             control={form.control}
             name="patientAccountNo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Pat. Acct. No:</FormLabel>
+                <FormLabel className="text-xs">Patient Account Number:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -174,7 +252,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="primaryCareProvider"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Primary Care Provider:</FormLabel>
+                <FormLabel className="text-xs">Assigned Primary Physician:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -188,7 +266,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="referringProvider"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Referring Provider:</FormLabel>
+                <FormLabel className="text-xs">Referring Physician/Provider:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -203,7 +281,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs">
-                  Last Name: <span className="text-destructive">*</span>
+                  Family Name: <span className="text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
@@ -219,7 +297,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs">
-                  First Name: <span className="text-destructive">*</span>
+                  Given Name: <span className="text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
@@ -234,7 +312,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="middleName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Middle Name / MI:</FormLabel>
+                <FormLabel className="text-xs">Middle Name / Initial:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -249,7 +327,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs">
-                  DOB: <span className="text-destructive">*</span>
+                  Date of Birth: <span className="text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input type="date" className="h-8" {...field} />
@@ -265,7 +343,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs">
-                  Sex: <span className="text-destructive">*</span>
+                  Gender: <span className="text-destructive">*</span>
                 </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
@@ -291,7 +369,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="ssn"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">SSN:</FormLabel>
+                <FormLabel className="text-xs">Social Security Number:</FormLabel>
                 <FormControl>
                   <Input className="h-8" placeholder="___-__-____" {...field} />
                 </FormControl>
@@ -305,7 +383,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="weight"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Weight:</FormLabel>
+                <FormLabel className="text-xs">Weight (lbs):</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -319,7 +397,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="height"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Height:</FormLabel>
+                <FormLabel className="text-xs">Height (ft/in):</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -333,7 +411,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="nameSuffix"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Name Suffix:</FormLabel>
+                <FormLabel className="text-xs">Name Suffix/Title:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -402,7 +480,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="employmentStatus"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Employment Status:</FormLabel>
+                <FormLabel className="text-xs">Current Employment Status:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -433,7 +511,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="professionalTitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Professional Title:</FormLabel>
+                <FormLabel className="text-xs">Job Title/Profession:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -447,7 +525,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="preferredLanguage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Preferred Language:</FormLabel>
+                <FormLabel className="text-xs">Primary Language:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -484,7 +562,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="religion"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Religion:</FormLabel>
+                <FormLabel className="text-xs">Religious Affiliation:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -589,7 +667,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="ethnicity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Ethnicity:</FormLabel>
+                <FormLabel className="text-xs">Ethnic Background:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -618,7 +696,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="race"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Race:</FormLabel>
+                <FormLabel className="text-xs">Racial Background:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -656,7 +734,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             name="tribalAffiliation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Tribal Affiliation:</FormLabel>
+                <FormLabel className="text-xs">Tribal/Federal Recognition:</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="h-8">
@@ -692,7 +770,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
               name="mothersMaidenName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs">Mother's Maiden Name:</FormLabel>
+                  <FormLabel className="text-xs">Mother's Birth Name:</FormLabel>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <Label className="text-xs text-muted-foreground">Last</Label>
@@ -712,11 +790,11 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
       </div>
 
       {/* Optional Information Accordions */}
-      <Accordion type="multiple" className="w-full">
-        {/* Smoking History */}
-        <AccordionItem value="smoking-history">
+      <Accordion type="single" collapsible className="w-full">
+        {/* Tobacco Use History */}
+        <AccordionItem value="tobacco-use-history">
           <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
-            Smoking History
+            Tobacco Use & Smoking History
           </AccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
@@ -957,7 +1035,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
         {/* Employment Information */}
         <AccordionItem value="employment-info">
           <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
-            Employment Information
+            Employment & Work Details
           </AccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
@@ -1124,7 +1202,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
         {/* Emergency Contact */}
         <AccordionItem value="emergency-contact">
           <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
-            Emergency Contact
+            Emergency Contact Information
           </AccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
@@ -1299,7 +1377,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
         {/* Next of Kin */}
         <AccordionItem value="next-of-kin">
           <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
-            Next of Kin
+            Next of Kin Information
           </AccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
@@ -1475,7 +1553,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
         {/* User Defined Fields */}
         <AccordionItem value="user-defined-fields">
           <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
-            User Defined Fields
+            Custom Data Fields
           </AccordionTrigger>
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-2">
@@ -1569,7 +1647,7 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
         {/* Account Status */}
         <AccordionItem value="account-status">
           <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
-            Account Status
+            Account Settings & Status
           </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-2">
@@ -1645,12 +1723,73 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
     </div>
   );
 
-
   const renderInsuranceInfo = () => (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Eligibility & Benefits Insurance Information */}
+      <div>
+        <h3 className="text-sm font-semibold text-primary mb-4">Insurance Coverage & Benefits Verification:</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
       <FormField
         control={form.control}
-        name="hasInsurance"
+            name="lastCheckedOn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs">Last Verification Date:</FormLabel>
+                <FormControl>
+                  <Input type="date" className="h-8" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="eligibilityCheckFrequency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs">Verification Schedule:</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="each-appointment">Each appointment</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="quarterly">Quarterly</SelectItem>
+                    <SelectItem value="annually">Annually</SelectItem>
+                    <SelectItem value="as-needed">As needed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="eligibilityBenefitPayerName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs">Insurance Payer/Provider Name:</FormLabel>
+                <FormControl>
+                  <div className="flex gap-1">
+                    <Input className="h-8 flex-1" {...field} />
+                    <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                    <Button type="button" variant="outline" size="sm" className="h-8 px-2">Clear</Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="col-span-3">
+            <FormField
+              control={form.control}
+              name="automatedEligibility"
         render={({ field }) => (
           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
             <FormControl>
@@ -1660,20 +1799,344 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
               />
             </FormControl>
             <div className="space-y-1 leading-none">
-              <FormLabel>I have health insurance</FormLabel>
+                    <FormLabel className="text-xs">Automated Verification</FormLabel>
             </div>
           </FormItem>
         )}
       />
-      
-      {form.watch('hasInsurance') && (
+            <Button type="button" variant="outline" size="sm" className="mt-2">
+              Search Insurance Coverage
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Accordion for Insurance Details */}
+      <Accordion type="single" collapsible className="w-full">
+        {/* Primary Insurance */}
+        <AccordionItem value="primary-insurance">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Primary Coverage Details
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="patientInsuranceType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Coverage Type/Payment Source:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="Select Coverage Type/Payment Source" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="private-insurance">Private Insurance</SelectItem>
+                        <SelectItem value="medicare">Medicare</SelectItem>
+                        <SelectItem value="medicaid">Medicaid</SelectItem>
+                        <SelectItem value="workers-comp">Worker's Compensation</SelectItem>
+                        <SelectItem value="self-pay">Self Pay</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuranceCompany"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Insurance Company: <span className="text-destructive">*</span></FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuranceName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Plan Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="primaryInsured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Primary Insured:</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Last Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">First Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="middleInitial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">MI:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="patientRelationshipToPrimaryInsured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Patient Relationship To Primary Insured:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="self">Self</SelectItem>
+                        <SelectItem value="spouse">Spouse</SelectItem>
+                        <SelectItem value="child">Child</SelectItem>
+                        <SelectItem value="parent">Parent</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="capitation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Capitation:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="subscriberId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Subscriber ID: <span className="text-destructive">*</span></FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="groupNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Group No:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="planName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Plan Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuredAuthorization"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Insured Authorization:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deductible"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Deductible:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="visitCoPayment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Visit Co-payment:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="col-span-3">
+                <h4 className="text-xs font-medium mb-2">Release of Information:</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
           <FormField
             control={form.control}
-            name="primaryInsurance"
+                    name="signatureOnFile"
             render={({ field }) => (
-              <FormItem className="col-span-2">
-                <FormLabel className="text-xs">Primary Insurance Provider</FormLabel>
+                      <FormItem>
+                        <FormLabel className="text-xs">Signature On File:</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="signatureDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Signature Date:</FormLabel>
+                        <FormControl>
+                          <Input type="date" className="h-8" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Authorization by Insurance Co */}
+        <AccordionItem value="authorization">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Authorization (by Insurance Co.)
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="pt-2 mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-xs text-blue-800">
+                Please enter Authorization Number in Visits (Billing Options / Prior Authorization Number) for these counts to be accurate.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
+              <FormField
+                control={form.control}
+                name="authorizationNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Authorization Number:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -1681,12 +2144,13 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="policyNumber"
+                name="numberOfVisitsAuthorized"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Policy Number</FormLabel>
+                    <FormLabel className="text-xs">No. of Visits Authorized:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -1694,12 +2158,234 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
               </FormItem>
             )}
           />
+
+              <FormField
+                control={form.control}
+                name="effectiveStartDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Eff. Start Date:</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="effectiveStopDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Eff. Stop Date:</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="numberOfVisitsUsed"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">No. of Visits Used:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8 bg-gray-100" {...field} disabled />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="numberOfVisitsLeft"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">No. of Visits Left:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8 bg-gray-100" {...field} disabled />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Secondary Insurance */}
+        <AccordionItem value="secondary-insurance">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Secondary Insurance
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="patientInsuranceType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Patient Insurance Type/Source of Payment:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="Select Coverage Type/Payment Source" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="private-insurance">Private Insurance</SelectItem>
+                        <SelectItem value="medicare">Medicare</SelectItem>
+                        <SelectItem value="medicaid">Medicaid</SelectItem>
+                        <SelectItem value="workers-comp">Worker's Compensation</SelectItem>
+                        <SelectItem value="self-pay">Self Pay</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuranceCompany"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Insurance Co:</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuranceName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Plan Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="secondaryInsured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Secondary Insured:</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Last Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">First Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="middleInitial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">MI:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="patientRelationshipToSecondaryInsured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Patient Relationship To Secondary Insured:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="- select one -" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="self">Self</SelectItem>
+                        <SelectItem value="spouse">Spouse</SelectItem>
+                        <SelectItem value="child">Child</SelectItem>
+                        <SelectItem value="parent">Parent</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="subscriberId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Subscriber ID:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
           <FormField
             control={form.control}
             name="groupNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Group Number</FormLabel>
+                    <FormLabel className="text-xs">Group No:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -1707,12 +2393,13 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="subscriberName"
+                name="planName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Subscriber Name</FormLabel>
+                    <FormLabel className="text-xs">Plan Name:</FormLabel>
                 <FormControl>
                   <Input className="h-8" {...field} />
                 </FormControl>
@@ -1720,12 +2407,88 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="subscriberDOB"
+                name="secondaryInsuredAuthorization"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Subscriber Date of Birth</FormLabel>
+                    <FormLabel className="text-xs">Sec. Insured Authorization:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deductible"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Deductible:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="visitCoPayment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Visit Co-payment:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="col-span-3">
+                <h4 className="text-xs font-medium mb-2">Release of Information:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                  <FormField
+                    control={form.control}
+                    name="signatureOnFile"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Signature On File:</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="signatureDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Signature Date:</FormLabel>
                 <FormControl>
                   <Input type="date" className="h-8" {...field} />
                 </FormControl>
@@ -1734,7 +2497,301 @@ export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: Pat
             )}
           />
         </div>
-      )}
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Third Insurance */}
+        <AccordionItem value="third-insurance">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Third Insurance
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="patientInsuranceType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Patient Insurance Type/Source of Payment:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="Select Coverage Type/Payment Source" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="private-insurance">Private Insurance</SelectItem>
+                        <SelectItem value="medicare">Medicare</SelectItem>
+                        <SelectItem value="medicaid">Medicaid</SelectItem>
+                        <SelectItem value="workers-comp">Worker's Compensation</SelectItem>
+                        <SelectItem value="self-pay">Self Pay</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuranceCompany"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Insurance Co:</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="insuranceName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Plan Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="thirdInsured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Third Insured:</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Last Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">First Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="middleInitial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">MI:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="patientRelationshipToThirdInsured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Patient Relationship To Third Insured:</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-8">
+                          <SelectValue placeholder="- select one -" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="self">Self</SelectItem>
+                        <SelectItem value="spouse">Spouse</SelectItem>
+                        <SelectItem value="child">Child</SelectItem>
+                        <SelectItem value="parent">Parent</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="subscriberId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Subscriber ID:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="groupNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Group No:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="planName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Plan Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="deductible"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Deductible:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="visitCoPayment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Visit Co-payment:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Guarantor Information */}
+        <AccordionItem value="guarantor-information">
+          <AccordionTrigger className="text-sm font-semibold text-primary hover:no-underline">
+            Guarantor Information (if different from primary insured or patient)
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3 pt-2">
+              <FormField
+                control={form.control}
+                name="guarantor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Guarantor:</FormLabel>
+                    <FormControl>
+                      <div className="flex gap-1">
+                        <Input className="h-8 flex-1" {...field} />
+                        <Button type="button" variant="outline" size="sm" className="h-8 px-2">...</Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Last Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">First Name:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="middleInitial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">MI:</FormLabel>
+                    <FormControl>
+                      <Input className="h-8" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 
