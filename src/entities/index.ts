@@ -10,3 +10,4 @@ export * from './Ward';
 export * from './Employee';
 export * from './Radiology';
 export * from './Analytics';
+export * from './Doctor';

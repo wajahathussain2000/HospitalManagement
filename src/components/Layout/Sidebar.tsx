@@ -36,7 +36,22 @@ import {
   Target,
   Zap,
   Wrench,
-  Package
+  Package,
+  Key,
+  Users2,
+  Bell,
+  Video,
+  MessageSquare,
+  Star,
+  Microscope,
+  Dna,
+  Cpu,
+  Truck,
+  Globe,
+  Link,
+  Rocket,
+  RotateCcw,
+  ShoppingCart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -70,8 +85,65 @@ const getNavItems = (userRole: string) => {
     // Doctor specific
     { icon: Users, label: 'My Patients', path: '/doctor/patients', roles: [UserRole.DOCTOR] },
     { icon: Calendar, label: 'My Appointments', path: '/doctor/appointments', roles: [UserRole.DOCTOR] },
+    { icon: Stethoscope, label: 'Consultations', path: '/doctor/consultations', roles: [UserRole.DOCTOR] },
+    { icon: TestTube, label: 'Lab Orders', path: '/doctor/lab-orders', roles: [UserRole.DOCTOR] },
+    { icon: Bell, label: 'Follow-ups', path: '/doctor/follow-up', roles: [UserRole.DOCTOR] },
+    { icon: FileText, label: 'Discharge', path: '/doctor/discharge', roles: [UserRole.DOCTOR] },
+    { icon: Video, label: 'Telemedicine', path: '/doctor/telemedicine', roles: [UserRole.DOCTOR] },
+    { icon: MessageSquare, label: 'Communication', path: '/doctor/communication', roles: [UserRole.DOCTOR] },
+    { icon: DollarSign, label: 'Billing', path: '/doctor/billing', roles: [UserRole.DOCTOR] },
+    { icon: Calendar, label: 'Schedule', path: '/doctor/schedule', roles: [UserRole.DOCTOR] },
+    { icon: FileText, label: 'Documents', path: '/doctor/documents', roles: [UserRole.DOCTOR] },
+    { icon: Star, label: 'Feedback', path: '/doctor/feedback', roles: [UserRole.DOCTOR] },
+    { icon: BarChart3, label: 'Analytics', path: '/doctor/analytics', roles: [UserRole.DOCTOR] },
+    { icon: Users, label: 'Collaboration', path: '/doctor/collaboration', roles: [UserRole.DOCTOR] },
+    { icon: Bell, label: 'Notifications', path: '/doctor/notifications', roles: [UserRole.DOCTOR] },
+    { icon: User, label: 'Profile', path: '/doctor/profile', roles: [UserRole.DOCTOR] },
     { icon: FileText, label: 'Medical Records', path: '/doctor/records', roles: [UserRole.DOCTOR] },
     { icon: Pill, label: 'Prescriptions', path: '/doctor/prescriptions', roles: [UserRole.DOCTOR] },
+    
+    // Pharmacy specific
+    { icon: Pill, label: 'Medicine Catalog', path: '/pharmacy/catalog', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: FileText, label: 'Prescriptions', path: '/pharmacy/prescriptions', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Receipt, label: 'Sales & Billing', path: '/pharmacy/sales', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Shield, label: 'Pharmacy Roles', path: '/pharmacy/roles', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Package, label: 'Inventory Management', path: '/pharmacy/inventory', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: ShoppingCart, label: 'Procurement Management', path: '/pharmacy/procurement', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Package, label: 'Pack/Loose Management', path: '/pharmacy/pack-loose', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: FileText, label: 'Prescription Integration', path: '/pharmacy/prescription-integration', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: CreditCard, label: 'Sales & POS Billing', path: '/pharmacy/sales-pos', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: RotateCcw, label: 'Returns & Expiry', path: '/pharmacy/returns-expiry', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Users, label: 'Inpatient/Outpatient Integration', path: '/pharmacy/inpatient-outpatient', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Settings, label: 'Advanced Operations', path: '/pharmacy/advanced-operations', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: BarChart3, label: 'Reports & Analytics', path: '/pharmacy/reports', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Shield, label: 'Compliance & Security', path: '/pharmacy/compliance', roles: [UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    
+    // Lab specific
+    { icon: Microscope, label: 'Lab Core Setup', path: '/lab/setup', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: TestTube, label: 'Test Catalog', path: '/lab/catalog', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: ClipboardList, label: 'Order Entry', path: '/lab/orders', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Package, label: 'Specimen Processing', path: '/lab/processing', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Cpu, label: 'Analyzer Integration', path: '/lab/analyzers', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: FileText, label: 'Result Entry', path: '/lab/results', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Microscope, label: 'Microbiology', path: '/lab/microbiology', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Dna, label: 'Molecular/PCR', path: '/lab/molecular', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Microscope, label: 'Anatomic Pathology', path: '/lab/pathology', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Shield, label: 'Quality Control', path: '/lab/quality', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Truck, label: 'Logistics & Home Collection', path: '/lab/logistics', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Package, label: 'Inventory & Reagents', path: '/lab/inventory', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: CreditCard, label: 'Billing & Insurance', path: '/lab/billing', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Globe, label: 'Portals & Notifications', path: '/lab/portals', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Link, label: 'Integrations & Interoperability', path: '/lab/integrations', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: BarChart3, label: 'Analytics & AI', path: '/lab/analytics', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Shield, label: 'Security & Audit', path: '/lab/security', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Heart, label: 'Optional Modules', path: '/lab/optional', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    { icon: Rocket, label: 'Go-Live & Operations', path: '/lab/go-live', roles: [UserRole.LAB_TECHNICIAN, UserRole.ADMIN, UserRole.SUPER_ADMIN] },
+    
+    // Multi-Doctor Demo (Available to all for demonstration)
+    { icon: Key, label: 'Multi-Doctor Demo', path: '/doctor/login-demo', roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR, UserRole.NURSE, UserRole.RECEPTIONIST, UserRole.LAB_TECHNICIAN, UserRole.PHARMACIST, UserRole.ACCOUNTANT, UserRole.HR_MANAGER, UserRole.RADIOLOGIST, UserRole.PATIENT] },
+    
+    // Login Credentials (Available to all for reference)
+    { icon: Key, label: 'Login Credentials', path: '/login-credentials', roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR, UserRole.NURSE, UserRole.RECEPTIONIST, UserRole.LAB_TECHNICIAN, UserRole.PHARMACIST, UserRole.ACCOUNTANT, UserRole.HR_MANAGER, UserRole.RADIOLOGIST, UserRole.PATIENT] },
     
     // Nurse specific
     { icon: Heart, label: 'Patient Monitoring', path: '/nurse/monitoring', roles: [UserRole.NURSE] },
@@ -91,11 +163,7 @@ const getNavItems = (userRole: string) => {
     { icon: FileText, label: 'Test Results', path: '/lab/results', roles: [UserRole.LAB_TECHNICIAN] },
     { icon: BarChart3, label: 'Lab Analytics', path: '/lab/analytics', roles: [UserRole.LAB_TECHNICIAN] },
     
-    // Pharmacist specific
-    { icon: Pill, label: 'Medicine Catalog', path: '/pharmacy/catalog', roles: [UserRole.PHARMACIST] },
-    { icon: FileText, label: 'Prescriptions', path: '/pharmacy/prescriptions', roles: [UserRole.PHARMACIST] },
-    { icon: Receipt, label: 'Sales & Billing', path: '/pharmacy/sales', roles: [UserRole.PHARMACIST] },
-    { icon: TrendingUp, label: 'Inventory', path: '/pharmacy/inventory', roles: [UserRole.PHARMACIST] },
+    // Pharmacist specific - removed duplicates (already in main pharmacy section above)
     
     // Accountant specific
     { icon: DollarSign, label: 'Financial Dashboard', path: '/accountant/dashboard', roles: [UserRole.ACCOUNTANT] },
@@ -188,35 +256,35 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       <nav className="flex-1 overflow-y-auto mt-6 scrollbar-hide">
         <div className="px-2 pb-4">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                cn(
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) =>
+              cn(
                   "flex items-center px-4 py-3 text-blue-100 hover:bg-blue-800 hover:text-white transition-colors rounded-lg mx-2 mb-1",
-                  isActive && "bg-blue-800 text-white border-r-2 border-blue-400",
-                  !isOpen && "justify-center px-4"
-                )
-              }
-            >
+                isActive && "bg-blue-800 text-white border-r-2 border-blue-400",
+                !isOpen && "justify-center px-4"
+              )
+            }
+          >
               <item.icon className="h-5 w-5 flex-shrink-0" />
               {isOpen && <span className="ml-3 truncate">{item.label}</span>}
-            </NavLink>
-          ))}
+          </NavLink>
+        ))}
         </div>
       </nav>
 
       {/* Logout Button */}
       <div className="p-4 border-t border-blue-800 mt-auto">
-        <Button
-          onClick={handleLogout}
-          variant="outline"
-          className="w-full text-white border-white hover:bg-white hover:text-blue-900"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          {isOpen && "Logout"}
-        </Button>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="w-full text-white border-red-500 bg-red-600 hover:bg-red-700 hover:text-white"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="ml-2">Logout</span>
+          </Button>
       </div>
     </div>
   );
