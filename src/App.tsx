@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { ThemeProvider } from "next-themes";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -40,7 +41,6 @@ import DoctorNotificationsPage from "./pages/Doctor/DoctorNotificationsPage";
 import DoctorProfilePage from "./pages/Doctor/DoctorProfilePage";
 import PharmacyDashboardPage from "./pages/Pharmacy/PharmacyDashboardPage";
 import PharmacyRolesPage from "./pages/Pharmacy/PharmacyRolesPage";
-import CatalogPage from "./pages/Pharmacy/CatalogPage";
 import PrescriptionsPage from "./pages/Pharmacy/PrescriptionsPage";
 import SalesPage from "./pages/Pharmacy/SalesPage";
 import PharmacyInventoryManagementPage from "./pages/Pharmacy/InventoryManagementPage";
@@ -73,15 +73,24 @@ import SecurityAuditPage from "./pages/Lab/SecurityAuditPage";
 import OptionalModulesPage from "./pages/Lab/OptionalModulesPage";
 import GoLiveOperationsPage from "./pages/Lab/GoLiveOperationsPage";
 import LoginCredentialsPage from "./pages/Auth/LoginCredentialsPage";
+import { TranslationTest } from './components/TranslationTest';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const queryClient = new QueryClient();
 
 function AppRoutes() {
   const { user } = useAuth();
+  
+  console.log('AppRoutes rendering, user:', user);
 
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <RoleBasedDashboard />
+        </ProtectedRoute>
+      } />
       <Route path="/" element={
         <ProtectedRoute>
           <RoleBasedDashboard />
@@ -239,11 +248,6 @@ function AppRoutes() {
     <Route path="/pharmacy/roles" element={
       <ProtectedRoute allowedRoles={[UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
         <PharmacyRolesPage />
-      </ProtectedRoute>
-    } />
-    <Route path="/pharmacy/catalog" element={
-      <ProtectedRoute allowedRoles={[UserRole.PHARMACIST, UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
-        <CatalogPage />
       </ProtectedRoute>
     } />
     <Route path="/pharmacy/prescriptions" element={
@@ -421,6 +425,9 @@ function AppRoutes() {
     
     {/* Login Credentials Page (Public) */}
     <Route path="/login-credentials" element={<LoginCredentialsPage />} />
+    
+    {/* Translation Test Page (Public) */}
+    <Route path="/translation-test" element={<TranslationTest />} />
       
       <Route path="/unauthorized" element={
         <div className="min-h-screen flex items-center justify-center">
@@ -435,18 +442,26 @@ function AppRoutes() {
   );
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  console.log('App component rendering...');
+  
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AuthProvider>
+                <AppRoutes />
+              </AuthProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;

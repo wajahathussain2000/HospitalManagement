@@ -1,7 +1,8 @@
-import { MainLayout } from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
+import { useLocaleFormatting } from '@/utils/locale';
 import { 
   Users, 
   UserCheck, 
@@ -18,22 +19,25 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
+  const { formatNumber } = useLocaleFormatting();
+  
   const stats = [
-    { title: 'Total Patients', value: '2,847', change: '+12%', icon: Users, color: 'text-blue-600' },
-    { title: 'Active Doctors', value: '45', change: '+3', icon: UserCheck, color: 'text-green-600' },
-    { title: 'Today\'s Appointments', value: '127', change: '+8%', icon: Calendar, color: 'text-purple-600' },
-    { title: 'Monthly Revenue', value: '245,680', change: '+15%', icon: DollarSign, color: 'text-emerald-600' },
-    { title: 'Pending Claims', value: '89', change: '-12', icon: FileText, color: 'text-orange-600' },
-    { title: 'Emergency Cases', value: '7', change: '+2', icon: AlertTriangle, color: 'text-red-600' }
+    { title: t('dashboard.totalPatients'), value: formatNumber(2847), change: '+12%', icon: Users, color: 'text-blue-600' },
+    { title: t('dashboard.activeDoctors'), value: formatNumber(45), change: '+3', icon: UserCheck, color: 'text-green-600' },
+    { title: t('dashboard.todaysAppointments'), value: formatNumber(127), change: '+8%', icon: Calendar, color: 'text-purple-600' },
+    { title: t('dashboard.monthlyRevenue'), value: formatNumber(245680), change: '+15%', icon: DollarSign, color: 'text-emerald-600' },
+    { title: t('dashboard.pendingClaims'), value: formatNumber(89), change: '-12', icon: FileText, color: 'text-orange-600' },
+    { title: t('dashboard.emergencyCases'), value: formatNumber(7), change: '+2', icon: AlertTriangle, color: 'text-red-600' }
   ];
 
   const quickActions = [
-    { title: 'Manage Users', description: 'Add, edit, or remove hospital staff', icon: Users, color: 'bg-blue-500' },
-    { title: 'Doctor Management', description: 'Manage doctor profiles and schedules', icon: Stethoscope, color: 'bg-green-500' },
-    { title: 'System Settings', description: 'Configure hospital settings', icon: Settings, color: 'bg-gray-500' },
-    { title: 'Reports & Analytics', description: 'View comprehensive reports', icon: BarChart3, color: 'bg-purple-500' },
-    { title: 'Emergency Protocol', description: 'Handle emergency situations', icon: AlertTriangle, color: 'bg-red-500' },
-    { title: 'Financial Overview', description: 'Monitor revenue and expenses', icon: DollarSign, color: 'bg-emerald-500' }
+    { title: t('dashboard.manageUsers'), description: t('dashboard.manageUsersDesc'), icon: Users, color: 'bg-blue-500' },
+    { title: t('dashboard.doctorManagement'), description: t('dashboard.doctorManagementDesc'), icon: Stethoscope, color: 'bg-green-500' },
+    { title: t('dashboard.systemSettings'), description: t('dashboard.systemSettingsDesc'), icon: Settings, color: 'bg-gray-500' },
+    { title: t('dashboard.reportsAnalytics'), description: t('dashboard.reportsAnalyticsDesc'), icon: BarChart3, color: 'bg-purple-500' },
+    { title: t('dashboard.emergencyProtocol'), description: t('dashboard.emergencyProtocolDesc'), icon: AlertTriangle, color: 'bg-red-500' },
+    { title: t('dashboard.financialOverview'), description: t('dashboard.financialOverviewDesc'), icon: DollarSign, color: 'bg-emerald-500' }
   ];
 
   const recentActivities = [
@@ -45,18 +49,17 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <MainLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-1">Complete hospital management overview</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('dashboard.adminDashboard')}</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('dashboard.completeOverview')}</p>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="bg-green-100 text-green-800">
+            <Badge variant="outline" className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
               <Shield className="h-3 w-3 mr-1" />
-              Admin Access
+              {t('dashboard.adminAccess')}
             </Badge>
           </div>
         </div>
@@ -64,15 +67,15 @@ export default function AdminDashboard() {
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
           {stats.map((stat, index) => (
-            <Card key={index}>
+            <Card key={index} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-sm text-green-600">{stat.change}</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.title}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</p>
+                    <p className="text-sm text-green-600 dark:text-green-400">{stat.change}</p>
                   </div>
-                  <div className={`p-3 rounded-full bg-gray-100 ${stat.color}`}>
+                  <div className={`p-3 rounded-full bg-gray-100 dark:bg-gray-700 ${stat.color}`}>
                     <stat.icon className="h-6 w-6" />
                   </div>
                 </div>
@@ -174,6 +177,5 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-    </MainLayout>
   );
 }

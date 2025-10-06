@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Heart, 
   Activity, 
@@ -84,6 +86,8 @@ interface Ward {
 export default function NurseDashboard() {
   const [selectedTab, setSelectedTab] = useState('overview');
   const [selectedWard, setSelectedWard] = useState('all');
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const wards: Ward[] = [
     {
@@ -240,13 +244,13 @@ export default function NurseDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Nurse Dashboard</h1>
-          <p className="text-gray-600 mt-1">Patient monitoring and care management</p>
+      <div className={cn("flex justify-between items-center", isRTL && "flex-row-reverse")}>
+        <div className={cn(isRTL && "text-right")}>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('nurse.nurseDashboard')}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{t('nurse.patientMonitoring')}</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" className="flex items-center space-x-2">
+        <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-4" : "space-x-4")}>
+          <Button variant="outline" className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2" : "space-x-2")}>
             <Bell className="h-4 w-4" />
             <span>Alerts</span>
           </Button>

@@ -12,6 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 
 const personalInfoSchema = z.object({
   patientAccountNo: z.string().optional(),
@@ -212,6 +214,8 @@ interface PatientRegistrationFormProps {
 }
 
 export function PatientRegistrationForm({ onSubmit, onCancel, onEnrollPHR }: PatientRegistrationFormProps) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const [activeTab, setActiveTab] = useState('patient-data');
 
   const form = useForm<PersonalInfo & ContactInfo & InsuranceInfo & OptionalInfo>({

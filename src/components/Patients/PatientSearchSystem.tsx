@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -90,6 +92,9 @@ interface SearchFilters {
 }
 
 export function PatientSearchSystem({ patients, onPatientSelect }: PatientSearchSystemProps) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  
   const [filters, setFilters] = useState<SearchFilters>({
     searchTerm: '',
     status: 'all',
@@ -385,33 +390,37 @@ export function PatientSearchSystem({ patients, onPatientSelect }: PatientSearch
     <div className="space-y-6">
       {/* Enhanced Search and Filter Bar */}
       <div className="bg-white p-4 rounded-lg border shadow-sm">
-        <div className="flex gap-3 mb-4">
+        <div className={cn("flex gap-3 mb-4", isRTL && "flex-row-reverse")}>
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+          <Search className={cn("absolute top-3 h-4 w-4 text-gray-400", isRTL ? "right-3" : "left-3")} />
           <Input
-              placeholder="Search patients by name, ID, email, phone, or address..."
+              placeholder={t('patient.searchPatients')}
             value={filters.searchTerm}
             onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
-              className="pl-10 h-10"
+              className={cn("h-10", isRTL ? "pr-10" : "pl-10")}
+              dir={isRTL ? 'rtl' : 'ltr'}
           />
         </div>
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-            className={hasActiveFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : ''}
+            className={cn(
+              hasActiveFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : '',
+              isRTL && "flex-row-reverse"
+            )}
         >
-          <Filter className="h-4 w-4 mr-2" />
-          Filters
+          <Filter className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+          {t('patient.filterPatients')}
           {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-700">
+              <Badge variant="secondary" className={cn("bg-blue-100 text-blue-700", isRTL ? "mr-2" : "ml-2")}>
                 {Object.values(filters).filter(f => f !== 'all' && f !== 'name' && f !== 'asc').length}
             </Badge>
           )}
         </Button>
         {hasActiveFilters && (
-          <Button variant="ghost" onClick={clearFilters}>
-            <X className="h-4 w-4 mr-2" />
-            Clear
+          <Button variant="ghost" onClick={clearFilters} className={cn(isRTL && "flex-row-reverse")}>
+            <X className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+            {t('patient.clearFilters')}
           </Button>
         )}
       </div>

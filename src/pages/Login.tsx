@@ -9,6 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, User, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { cn } from '@/lib/utils';
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,6 +21,8 @@ export default function Login() {
   const { login, register } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   // Login form state
   const [loginData, setLoginData] = useState({
@@ -85,15 +91,15 @@ export default function Login() {
       const success = await register(registerData);
       if (success) {
         toast({
-          title: "Registration Successful",
-          description: "Welcome to the hospital system!",
+          title: t('auth.registrationSuccess'),
+          description: t('auth.welcomeMessage'),
         });
         navigate('/dashboard');
       } else {
-        setError('Registration failed. Email might already exist.');
+        setError(t('auth.registrationFailed'));
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError(t('auth.registrationError'));
     } finally {
       setIsLoading(false);
     }
@@ -119,33 +125,39 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        <div className="flex justify-end mb-4">
+          <div className="flex space-x-2 rtl:space-x-reverse">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
+        </div>
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <div className="bg-blue-600 p-3 rounded-full">
               <Shield className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Hospital Management</h1>
-          <p className="text-gray-600 mt-2">Comprehensive Healthcare System</p>
+          <h1 className={cn("text-3xl font-bold text-gray-900 dark:text-gray-100", isRTL && "text-right")}>{t('auth.hospitalManagement')}</h1>
+          <p className={cn("text-gray-600 dark:text-gray-400 mt-2", isRTL && "text-right")}>{t('auth.healthcareSystem')}</p>
         </div>
 
         <Tabs value={isLogin ? "login" : "register"} onValueChange={(value) => setIsLogin(value === "login")}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="register">Register as Patient</TabsTrigger>
+            <TabsTrigger value="login">{t('auth.login')}</TabsTrigger>
+            <TabsTrigger value="register">{t('auth.registerAsPatient')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">
-            <Card>
+            <Card className="dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center">
-                  <User className="h-5 w-5 mr-2" />
-                  Staff Login
+                <CardTitle className={cn("flex items-center text-gray-900 dark:text-gray-100", isRTL && "flex-row-reverse")}>
+                  <User className={cn("h-5 w-5", isRTL ? "ml-2" : "mr-2")} />
+                  {t('auth.staffLogin')}
                 </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Hospital staff can login with their credentials
+                <p className={cn("text-sm text-gray-600 dark:text-gray-400", isRTL && "text-right")}>
+                  {t('auth.staffLoginDesc')}
                 </p>
               </CardHeader>
               <CardContent>
@@ -158,25 +170,28 @@ export default function Login() {
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">{t('auth.email')}</Label>
                     <Input
                       id="email"
                       type="email"
                       value={loginData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      placeholder="Enter your email"
+                      placeholder={t('auth.emailPlaceholder')}
+                      className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                      dir={isRTL ? 'rtl' : 'ltr'}
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">{t('auth.password')}</Label>
                     <Input
                       id="password"
                       type="password"
                       value={loginData.password}
                       onChange={(e) => handleInputChange('password', e.target.value)}
-                      placeholder="Enter your password"
+                      placeholder={t('auth.passwordPlaceholder')}
+                      className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                       required
                     />
                   </div>
@@ -184,21 +199,21 @@ export default function Login() {
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Signing in...
+                        <Loader2 className={cn("h-4 w-4 animate-spin", isRTL ? "ml-2" : "mr-2")} />
+                        {t('auth.signingIn')}
                       </>
                     ) : (
-                      'Sign In'
+                      t('auth.signIn')
                     )}
                   </Button>
                 </form>
 
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-2">Demo Credentials:</h4>
-                  <div className="text-sm text-blue-700 space-y-1">
-                    <p><strong>Admin:</strong> admin@hospital.com / password</p>
-                    <p><strong>Doctor:</strong> doctor@hospital.com / password</p>
-                    <p><strong>Patient:</strong> patient@hospital.com / password</p>
+                <div className={cn("mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg", isRTL && "text-right")}>
+                  <h4 className={cn("font-medium text-blue-900 dark:text-blue-100 mb-2", isRTL && "text-right")}>{t('auth.demoCredentials')}</h4>
+                  <div className={cn("text-sm text-blue-700 dark:text-blue-300 space-y-1", isRTL && "text-right")}>
+                    <p><strong>{t('auth.admin')}:</strong> admin@hospital.com / password</p>
+                    <p><strong>{t('auth.doctor')}:</strong> doctor@hospital.com / password</p>
+                    <p><strong>{t('auth.patient')}:</strong> patient@hospital.com / password</p>
                   </div>
                 </div>
               </CardContent>
@@ -206,7 +221,7 @@ export default function Login() {
           </TabsContent>
 
           <TabsContent value="register">
-            <Card>
+            <Card className="dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <CardHeader>
                 <CardTitle>Patient Registration</CardTitle>
                 <p className="text-sm text-gray-600">

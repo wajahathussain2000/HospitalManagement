@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Users, 
   Calendar, 
@@ -92,6 +94,8 @@ export default function ReceptionistDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isPatientRegistrationOpen, setIsPatientRegistrationOpen] = useState(false);
   const [isAppointmentBookingOpen, setIsAppointmentBookingOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const todayStats = {
     totalAppointments: 45,

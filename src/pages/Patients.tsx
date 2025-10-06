@@ -12,6 +12,8 @@ import { PatientDashboard } from '@/components/Patients/PatientDashboard';
 import { EditPatientForm } from '@/components/Patients/EditPatientForm';
 import { ScheduleAppointmentForm } from '@/components/Patients/ScheduleAppointmentForm';
 import { VitalSignsForm } from '@/components/Patients/VitalSignsForm';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Users, 
   Plus, 
@@ -271,6 +273,9 @@ const patients = [
 ];
 
 export default function Patients() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [showMedicalHistory, setShowMedicalHistory] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<typeof patients[0] | null>(null);
@@ -454,38 +459,38 @@ export default function Patients() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Patients</h1>
-            <p className="text-gray-600 mt-1">Comprehensive patient management and records</p>
+        <div className={cn("flex justify-between items-center", isRTL && "flex-row-reverse")}>
+          <div className={cn(isRTL && "text-right")}>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('patient.patientManagement')}</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">{t('patient.comprehensiveManagement')}</p>
           </div>
-          <Button onClick={() => setShowRegistrationForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Register New Patient
+          <Button onClick={() => setShowRegistrationForm(true)} className={cn(isRTL && "flex-row-reverse")}>
+            <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+            {t('patient.addPatient')}
           </Button>
         </div>
 
         {/* Enhanced Patient Directory */}
-        <Card className="shadow-lg">
+        <Card className="shadow-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="bg-blue-100 p-2 rounded-lg">
-                  <Users className="h-6 w-6 text-blue-600" />
+            <div className={cn("flex items-center justify-between", isRTL && "flex-row-reverse")}>
+              <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-3" : "space-x-3")}>
+                <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
+                  <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <div>
-                  <CardTitle className="text-xl">Patient Directory</CardTitle>
-                  <p className="text-sm text-gray-600 mt-1">Manage and track patient information efficiently</p>
+                <div className={cn(isRTL && "text-right")}>
+                  <CardTitle className="text-xl text-gray-900 dark:text-gray-100">{t('patient.patientList')}</CardTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t('patient.manageEfficiently')}</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Export
+              <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2" : "space-x-2")}>
+                <Button variant="outline" size="sm" className={cn(isRTL && "flex-row-reverse")}>
+                  <FileText className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                  {t('patient.exportPatients')}
                 </Button>
-                <Button variant="outline" size="sm">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
+                <Button variant="outline" size="sm" className={cn(isRTL && "flex-row-reverse")}>
+                  <Settings className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                  {t('settings.settings')}
                 </Button>
               </div>
             </div>
@@ -500,9 +505,9 @@ export default function Patients() {
 
         {/* Patient Registration Dialog */}
         <Dialog open={showRegistrationForm} onOpenChange={setShowRegistrationForm}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <DialogHeader>
-              <DialogTitle>Register New Patient</DialogTitle>
+              <DialogTitle className="text-gray-900 dark:text-gray-100">{t('patient.patientRegistration')}</DialogTitle>
             </DialogHeader>
             <PatientRegistrationForm
               onSubmit={handlePatientRegistration}
@@ -513,9 +518,9 @@ export default function Patients() {
 
         {/* Medical History Dialog */}
         <Dialog open={showMedicalHistory} onOpenChange={setShowMedicalHistory}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
             <DialogHeader>
-              <DialogTitle>Medical History</DialogTitle>
+              <DialogTitle className="text-gray-900 dark:text-gray-100">{t('patient.medicalHistory')}</DialogTitle>
             </DialogHeader>
             <MedicalHistoryForm
               onSubmit={handleMedicalHistorySubmit}

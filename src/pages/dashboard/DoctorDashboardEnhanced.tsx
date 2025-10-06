@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { MainLayout } from '@/components/Layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,6 +65,8 @@ export default function DoctorDashboardEnhanced() {
   const { doctor, getDoctorSpecialization, getDoctorDepartment } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState('overview');
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   // Today's comprehensive stats
   const todayStats = [
@@ -371,7 +374,6 @@ export default function DoctorDashboardEnhanced() {
   };
 
   return (
-    <MainLayout>
       <div className="space-y-6">
         {/* Enhanced Header */}
         <div className="flex justify-between items-center">
@@ -1008,6 +1010,5 @@ export default function DoctorDashboardEnhanced() {
           </TabsContent>
         </Tabs>
       </div>
-    </MainLayout>
   );
 }

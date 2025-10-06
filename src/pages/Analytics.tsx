@@ -94,17 +94,12 @@ export default function Analytics() {
     setIsRefreshing(false);
   };
 
-  const formatCurrency = (amount: number) => {
+  const formatNumber = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
+      useGrouping: true,
     }).format(amount);
-  };
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US').format(num);
   };
 
   const getStatusIcon = (status: string) => {
@@ -192,7 +187,7 @@ export default function Analytics() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(analyticsData.overview.totalRevenue)}</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatNumber(analyticsData.overview.totalRevenue)}</p>
                   <div className="flex items-center mt-1">
                     {getTrendIcon(analyticsData.overview.revenueGrowth)}
                     <span className={`text-sm font-medium ml-1 ${getTrendColor(analyticsData.overview.revenueGrowth)}`}>
@@ -373,7 +368,7 @@ export default function Analytics() {
                           <p className="text-sm text-gray-600">{formatNumber(provider.claims)} claims</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-gray-900">{formatCurrency(provider.revenue)}</p>
+                          <p className="font-bold text-gray-900">{formatNumber(provider.revenue)}</p>
                           <p className="text-sm text-gray-600">{provider.percentage}%</p>
                         </div>
                       </div>
@@ -445,7 +440,7 @@ export default function Analytics() {
                             />
                           </div>
                           <div className="flex justify-between mt-2">
-                            <span className="text-sm font-bold text-gray-900">{formatCurrency(dept.revenue)}</span>
+                            <span className="text-sm font-bold text-gray-900">{formatNumber(dept.revenue)}</span>
                             <span className="text-sm text-gray-600">{dept.efficiency}% efficiency</span>
                           </div>
                         </div>
@@ -467,7 +462,7 @@ export default function Analytics() {
                   <div className="space-y-6">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-gray-900 mb-2">
-                        {formatCurrency(analyticsData.overview.totalRevenue)}
+                        {formatNumber(analyticsData.overview.totalRevenue)}
                       </div>
                       <p className="text-gray-600">Total Revenue</p>
                     </div>
@@ -478,11 +473,11 @@ export default function Analytics() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">vs Last Month</span>
-                        <span className="text-sm font-bold text-blue-600">{formatCurrency(275000)}</span>
+                        <span className="text-sm font-bold text-blue-600">{formatNumber(275000)}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">Average per Patient</span>
-                        <span className="text-sm font-bold text-gray-900">{formatCurrency(1001)}</span>
+                        <span className="text-sm font-bold text-gray-900">{formatNumber(1001)}</span>
                       </div>
                     </div>
                   </div>
@@ -519,7 +514,7 @@ export default function Analytics() {
                         </div>
                         <div className="flex justify-between text-sm text-gray-600">
                           <span>{dept.patients} patients</span>
-                          <span>{formatCurrency(dept.revenue)}</span>
+                          <span>{formatNumber(dept.revenue)}</span>
                         </div>
                       </div>
                     ))}

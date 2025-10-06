@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Search,
   Filter,
@@ -100,6 +102,8 @@ export default function PatientRecords() {
   const [isPatientDetailsOpen, setIsPatientDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [filterStatus, setFilterStatus] = useState('all');
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const [filterAge, setFilterAge] = useState('all');
   const [filterCondition, setFilterCondition] = useState('all');
 

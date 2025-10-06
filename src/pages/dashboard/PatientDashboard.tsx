@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Calendar, 
   FileText, 
@@ -70,6 +72,8 @@ interface LabResult {
 
 export default function PatientDashboard() {
   const [selectedTab, setSelectedTab] = useState('overview');
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const upcomingAppointments: Appointment[] = [
     {
@@ -173,47 +177,47 @@ export default function PatientDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Patient Portal</h1>
-          <p className="text-gray-600 mt-1">Welcome back, John Doe</p>
+      <div className={cn("flex justify-between items-center", isRTL && "flex-row-reverse")}>
+        <div className={cn(isRTL && "text-right")}>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('patient.patientPortal')}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{t('patient.welcomeBack')}</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" className="flex items-center space-x-2">
+        <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-4" : "space-x-4")}>
+          <Button variant="outline" className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2" : "space-x-2")}>
             <Phone className="h-4 w-4" />
-            <span>Emergency</span>
+            <span>{t('patient.emergency')}</span>
           </Button>
-          <Button className="flex items-center space-x-2">
+          <Button className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2" : "space-x-2")}>
             <Plus className="h-4 w-4" />
-            <span>Book Appointment</span>
+            <span>{t('patient.bookAppointment')}</span>
           </Button>
         </div>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
+        <Card className="dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Upcoming Appointments</p>
-                <p className="text-2xl font-bold text-blue-600">{upcomingAppointments.length}</p>
+            <div className={cn("flex items-center justify-between", isRTL && "flex-row-reverse")}>
+              <div className={cn(isRTL && "text-right")}>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('patient.upcomingAppointments')}</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{upcomingAppointments.length}</p>
               </div>
-              <div className="p-3 rounded-full bg-blue-100">
-                <Calendar className="h-6 w-6 text-blue-600" />
+              <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Medical Records</p>
-                <p className="text-2xl font-bold text-green-600">{medicalRecords.length}</p>
+            <div className={cn("flex items-center justify-between", isRTL && "flex-row-reverse")}>
+              <div className={cn(isRTL && "text-right")}>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('patient.medicalRecords')}</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{medicalRecords.length}</p>
               </div>
-              <div className="p-3 rounded-full bg-green-100">
-                <FileText className="h-6 w-6 text-green-600" />
+              <div className="p-3 rounded-full bg-green-100 dark:bg-green-900">
+                <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </CardContent>

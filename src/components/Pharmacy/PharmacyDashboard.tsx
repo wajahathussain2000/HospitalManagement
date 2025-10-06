@@ -3,6 +3,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Pill, 
   Users, 
@@ -347,6 +349,8 @@ import {
 export default function PharmacyDashboard() {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   // Mock pharmacy data
   const pharmacyStats = {

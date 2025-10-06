@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Badge } from '@/components/ui/badge';
 import { X, Plus, FileText } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 
 const medicalHistorySchema = z.object({
   currentMedications: z.array(z.object({

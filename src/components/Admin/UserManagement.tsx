@@ -12,6 +12,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { 
   Users, 
   Plus, 
@@ -142,6 +144,8 @@ interface RolePermission {
 }
 
 export default function UserManagement() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const [users, setUsers] = useState<User[]>([
     {
       id: '1',
@@ -431,12 +435,12 @@ export default function UserManagement() {
     return 'text-red-600';
   };
 
-  const formatCurrency = (amount?: number) => {
+  const formatNumber = (amount?: number) => {
     if (!amount) return 'N/A';
     return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      useGrouping: true,
     }).format(amount);
   };
 
@@ -1118,7 +1122,7 @@ export default function UserManagement() {
                                 <span className="text-sm text-gray-500">No data</span>
                               )}
                               {user.salary && (
-                                <p className="text-xs text-gray-600">{formatCurrency(user.salary)}</p>
+                                <p className="text-xs text-gray-600">{formatNumber(user.salary)}</p>
                               )}
                             </div>
                           </TableCell>
@@ -1470,7 +1474,7 @@ export default function UserManagement() {
                     {selectedUser.salary && (
                       <div className="flex items-center space-x-2">
                         <DollarSign className="h-4 w-4 text-gray-400" />
-                        <span>{formatCurrency(selectedUser.salary)}</span>
+                        <span>{formatNumber(selectedUser.salary)}</span>
                       </div>
                     )}
                   </CardContent>

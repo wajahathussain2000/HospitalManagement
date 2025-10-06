@@ -3,6 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
+import { useDataTranslation } from '@/utils/dataTranslation';
 import { 
   User, 
   Calendar, 
@@ -100,8 +103,14 @@ export function PatientDashboard({
   onViewDocument,
   onDownloadDocument
 }: PatientDashboardProps) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  const { translatePatientData } = useDataTranslation();
   
-  const upcomingAppointments = patient.appointments
+  // Translate patient data
+  const translatedPatient = translatePatientData(patient);
+  
+  const upcomingAppointments = translatedPatient.appointments
     .filter(apt => new Date(apt.date) >= new Date())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 3);
@@ -464,8 +473,8 @@ export function PatientDashboard({
               <Card className="border-0 shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-t-lg">
                   <CardTitle className="flex items-center text-lg">
-                  <AlertCircle className="h-5 w-5 mr-2" />
-                  Medical Alerts
+                  <AlertCircle className={cn("h-5 w-5", isRTL ? "ml-2" : "mr-2")} />
+                  {t('patient.medicalAlerts')}
                 </CardTitle>
               </CardHeader>
                 <CardContent className="p-6">
@@ -474,21 +483,21 @@ export function PatientDashboard({
                       <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
                         <div className="flex items-center space-x-2 mb-2">
                           <AlertCircle className="h-4 w-4 text-red-600" />
-                          <p className="font-semibold text-red-800">Allergies</p>
+                          <p className="font-semibold text-red-800">{t('patient.allergies')}</p>
                         </div>
-                        <p className="text-sm text-red-700">{patient.medicalInfo.allergies.join(', ')}</p>
+                        <p className="text-sm text-red-700">{translatedPatient.medicalInfo.allergies.join(', ')}</p>
                     </div>
                   )}
                   
-                  {patient.medicalInfo.conditions.length > 0 && (
+                  {translatedPatient.medicalInfo.conditions.length > 0 && (
                       <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
                         <div className="flex items-center space-x-2 mb-2">
                           <Stethoscope className="h-4 w-4 text-yellow-600" />
-                          <p className="font-semibold text-yellow-800">Conditions</p>
+                          <p className="font-semibold text-yellow-800">{t('patient.medicalConditions')}</p>
                         </div>
-                        <p className="text-sm text-yellow-700">{patient.medicalInfo.conditions.slice(0, 3).join(', ')}</p>
-                      {patient.medicalInfo.conditions.length > 3 && (
-                          <p className="text-xs text-yellow-600 mt-1">+{patient.medicalInfo.conditions.length - 3} more</p>
+                        <p className="text-sm text-yellow-700">{translatedPatient.medicalInfo.conditions.slice(0, 3).join(', ')}</p>
+                      {translatedPatient.medicalInfo.conditions.length > 3 && (
+                          <p className="text-xs text-yellow-600 mt-1">+{translatedPatient.medicalInfo.conditions.length - 3} {t('common.more')}</p>
                       )}
                     </div>
                   )}
