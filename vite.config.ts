@@ -16,4 +16,23 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Ensure consistent CSS output
+    cssCodeSplit: false,
+    // Optimize for consistent rendering
+    rollupOptions: {
+      output: {
+        // Ensure consistent chunk naming
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
+      }
+    },
+    // Ensure consistent minification
+    minify: 'esbuild',
+  },
+  // Ensure consistent CSS processing
+  css: {
+    devSourcemap: true,
+  },
 }));

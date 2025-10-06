@@ -7,17 +7,106 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Shield, User, AlertCircle } from 'lucide-react';
+import { Loader2, Shield, User, AlertCircle, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 
+// Real credentials for easy login
+const loginCredentials = [
+  {
+    role: 'Super Admin',
+    email: 'admin@hospital.com',
+    password: 'admin123',
+    description: 'Full system access',
+    color: 'bg-red-500 hover:bg-red-600'
+  },
+  {
+    role: 'Hospital Admin',
+    email: 'superadmin@hospital.com',
+    password: 'superadmin123',
+    description: 'Administrative access',
+    color: 'bg-purple-500 hover:bg-purple-600'
+  },
+  {
+    role: 'Cardiologist',
+    email: 'cardio@hospital.com',
+    password: 'password123',
+    description: 'Heart specialist',
+    color: 'bg-blue-500 hover:bg-blue-600'
+  },
+  {
+    role: 'Neurologist',
+    email: 'neuro@hospital.com',
+    password: 'password123',
+    description: 'Brain specialist',
+    color: 'bg-indigo-500 hover:bg-indigo-600'
+  },
+  {
+    role: 'Orthopedic Surgeon',
+    email: 'ortho@hospital.com',
+    password: 'password123',
+    description: 'Bone specialist',
+    color: 'bg-green-500 hover:bg-green-600'
+  },
+  {
+    role: 'Pediatrician',
+    email: 'pediatric@hospital.com',
+    password: 'password123',
+    description: 'Child specialist',
+    color: 'bg-pink-500 hover:bg-pink-600'
+  },
+  {
+    role: 'Emergency Doctor',
+    email: 'emergency@hospital.com',
+    password: 'password123',
+    description: 'Emergency care',
+    color: 'bg-orange-500 hover:bg-orange-600'
+  },
+  {
+    role: 'Nurse',
+    email: 'nurse@hospital.com',
+    password: 'password123',
+    description: 'Patient care',
+    color: 'bg-teal-500 hover:bg-teal-600'
+  },
+  {
+    role: 'Pharmacist',
+    email: 'pharmacy@hospital.com',
+    password: 'password123',
+    description: 'Medication management',
+    color: 'bg-cyan-500 hover:bg-cyan-600'
+  },
+  {
+    role: 'Lab Technician',
+    email: 'lab@hospital.com',
+    password: 'password123',
+    description: 'Laboratory tests',
+    color: 'bg-yellow-500 hover:bg-yellow-600'
+  },
+  {
+    role: 'Receptionist',
+    email: 'reception@hospital.com',
+    password: 'password123',
+    description: 'Front desk',
+    color: 'bg-gray-500 hover:bg-gray-600'
+  },
+  {
+    role: 'Patient',
+    email: 'patient@hospital.com',
+    password: 'password123',
+    description: 'Patient portal',
+    color: 'bg-emerald-500 hover:bg-emerald-600'
+  }
+];
+
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [copiedCredential, setCopiedCredential] = useState<string | null>(null);
   const { login, register } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -124,6 +213,37 @@ export default function Login() {
     }
   };
 
+  const fillCredentials = (credential: typeof loginCredentials[0]) => {
+    setLoginData({
+      email: credential.email,
+      password: credential.password
+    });
+    setError('');
+    toast({
+      title: t('auth.credentialsFilled'),
+      description: `${t('auth.loggedInAs')} ${credential.role}`,
+    });
+  };
+
+  const copyCredential = async (credential: typeof loginCredentials[0]) => {
+    const text = `Email: ${credential.email}\nPassword: ${credential.password}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedCredential(credential.email);
+      setTimeout(() => setCopiedCredential(null), 2000);
+      toast({
+        title: t('auth.copiedToClipboard'),
+        description: `${credential.role} ${t('auth.credentialsCopied')}`,
+      });
+    } catch (err) {
+      toast({
+        title: t('auth.copyFailed'),
+        description: t('auth.unableToCopy'),
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -209,12 +329,43 @@ export default function Login() {
                 </form>
 
                 <div className={cn("mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg", isRTL && "text-right")}>
-                  <h4 className={cn("font-medium text-blue-900 dark:text-blue-100 mb-2", isRTL && "text-right")}>{t('auth.demoCredentials')}</h4>
-                  <div className={cn("text-sm text-blue-700 dark:text-blue-300 space-y-1", isRTL && "text-right")}>
-                    <p><strong>{t('auth.admin')}:</strong> admin@hospital.com / password</p>
-                    <p><strong>{t('auth.doctor')}:</strong> doctor@hospital.com / password</p>
-                    <p><strong>{t('auth.patient')}:</strong> patient@hospital.com / password</p>
+                  <h4 className={cn("font-medium text-blue-900 dark:text-blue-100 mb-3", isRTL && "text-right")}>
+                    {t('auth.quickLoginCredentials')}
+                  </h4>
+                  <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                    {loginCredentials.map((credential, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          className={cn(
+                            "flex-1 text-white text-xs h-8",
+                            credential.color,
+                            isRTL && "flex-row-reverse"
+                          )}
+                          onClick={() => fillCredentials(credential)}
+                        >
+                          <span className="truncate">{credential.role}</span>
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-8 w-8 p-0"
+                          onClick={() => copyCredential(credential)}
+                        >
+                          {copiedCredential === credential.email ? (
+                            <Check className="h-3 w-3 text-green-600" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </Button>
+                      </div>
+                    ))}
                   </div>
+                  <p className={cn("text-xs text-blue-600 dark:text-blue-400 mt-2", isRTL && "text-right")}>
+                    {t('auth.clickToFill')}
+                  </p>
                 </div>
               </CardContent>
             </Card>
